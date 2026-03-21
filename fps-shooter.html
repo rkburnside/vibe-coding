@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Arena FPS</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; overflow: hidden; font-family: 'Courier New', monospace; }
+canvas { display: block; }
+#hud {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; color: white;
+}
+#crosshair {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 32px; color: rgba(0,255,255,0.9);
+  text-shadow: 0 0 8px #0ff;
+  line-height: 0;
+}
+#player-health {
+  position: absolute; bottom: 30px; left: 30px; font-size: 14px;
+  color: #ff4444; letter-spacing: 2px;
+}
+#health-bar {
+  width: 180px; height: 14px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid #ff4444;
+  margin-top: 5px;
+}
+#health-fill { height: 100%; background: #ff4444; width: 100%; }
+#enemy-health {
+  position: absolute; bottom: 30px; right: 30px;
+  font-size: 14px; color: #44ff44;
+  letter-spacing: 2px; text-align: right;
+}
+#enemy-bar {
+  width: 180px; height: 14px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid #44ff44;
+  margin-top: 5px; margin-left: auto;
+}
+#enemy-fill { height: 100%; background: #44ff44; width: 100%; }
+#message {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 64px; font-weight: bold;
+  display: none; text-align: center; line-height: 1.4;
+}
+#controls {
+  position: absolute; top: 20px; left: 20px;
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  line-height: 2;
+}
+#ammo {
+  position: absolute; bottom: 80px; right: 30px;
+  font-size: 13px; color: rgba(0,255,255,0.7);
+  text-align: right; letter-spacing: 2px;
+}
+#shoot-flash {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(255,255,180,0.12); display: none; pointer-events: none;
+}
+#hit-flash {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(255,0,0,0.28); display: none; pointer-events: none;
+}
+#title-bar {
+  position: absolute; top: 20px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 22px; color: rgba(0,255,255,0.6);
+  letter-spacing: 6px; text-shadow: 0 0 10px #0ff;
+}
+</style>
+</head>
+<body>
+<div id="hud">
+  <div id="title-bar">ARENA FPS</div>
+  <div id="controls">
+    &#x2191; / &#x2193; &nbsp; Move<br>
+    &#x2190; / &#x2192; &nbsp; Turn<br>
+    SPACE &nbsp;&nbsp;&nbsp; Shoot<br>
+    R &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Restart
+  </div>
+  <div id="crosshair">+</div>
+  <div id="player-health">
+    &#10084; PLAYER
+    <div id="health-bar"><div id="health-fill"></div></div>
+  </div>
+  <div id="enemy-health">
+    ENEMY &#9760;
+    <div id="enemy-bar"><div id="enemy-fill"></div></div>
+  </div>
+  <div id="ammo">READY TO FIRE</div>
+  <div id="message"></div>
+  <div id="shoot-flash"></div>
+  <div id="hit-flash"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ==================== SCENE ====================
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x050510);
+scene.fog = new THREE.FogExp2(0x050510, 0.035);
+
+const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.05, 200);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+// ==================== LIGHTING ====================
+scene.add(new THREE.AmbientLight(0x101830, 1.2));
+
+const centerLight = new THREE.PointLight(0x3355ff, 2.0, 35);
+centerLight.position.set(0, 3.5, 0);
+centerLight.castShadow = true;
+scene.add(centerLight);
+
+const cornerColors = [0xff2200, 0x00ff44, 0xff2200, 0x00ff44];
+[[-16,-16],[16,-16],[-16,16],[16,16]].forEach(([x,z], i) => {
+  const l = new THREE.PointLight(cornerColors[i], 1.2, 18);
+  l.position.set(x, 3.2, z);
+  scene.add(l);
+});
+
+// Muzzle flash light attached to camera
+const muzzleLight = new THREE.PointLight(0xffff44, 0, 8);
+muzzleLight.position.set(0, -0.15, -0.4);
+camera.add(muzzleLight);
+scene.add(camera);
+
+// ==================== ARENA ====================
+const HALF = 20;
+
+// Floor
+const floorGeo = new THREE.PlaneGeometry(HALF*2, HALF*2, 30, 30);
+const floorMat = new THREE.MeshLambertMaterial({ color: 0x1a1a2e });
+const floorMesh = new THREE.Mesh(floorGeo, floorMat);
+floorMesh.rotation.x = -Math.PI / 2;
+floorMesh.receiveShadow = true;
+scene.add(floorMesh);
+
+// Floor grid
+const grid = new THREE.GridHelper(HALF*2, 20, 0x223355, 0x1a2440);
+grid.position.y = 0.02;
+scene.add(grid);
+
+// Ceiling
+const ceilMesh = new THREE.Mesh(
+  new THREE.PlaneGeometry(HALF*2, HALF*2),
+  new THREE.MeshLambertMaterial({ color: 0x0d0d1a })
+);
+ceilMesh.rotation.x = Math.PI / 2;
+ceilMesh.position.y = 4;
+scene.add(ceilMesh);
+
+// Walls
+const wallMat = new THREE.MeshLambertMaterial({ color: 0x223355 });
+function addWall(w, h, d, x, y, z) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), wallMat);
+  m.position.set(x, y, z);
+  m.castShadow = true; m.receiveShadow = true;
+  scene.add(m);
+}
+addWall(HALF*2+1, 4, 0.6,  0, 2, -HALF);
+addWall(HALF*2+1, 4, 0.6,  0, 2,  HALF);
+addWall(0.6, 4, HALF*2+1, -HALF, 2, 0);
+addWall(0.6, 4, HALF*2+1,  HALF, 2, 0);
+
+// Pillars for cover
+const pillarPositions = [
+  [-8, -8], [8, -8], [-8, 8], [8, 8],
+  [0, -12], [0, 12], [-14, 0], [14, 0]
+];
+const pillarMat = new THREE.MeshLambertMaterial({ color: 0x2a3d55 });
+pillarPositions.forEach(([x, z]) => {
+  const p = new THREE.Mesh(new THREE.BoxGeometry(1.8, 4, 1.8), pillarMat);
+  p.position.set(x, 2, z);
+  p.castShadow = true; p.receiveShadow = true;
+  scene.add(p);
+  // Pillar glow strips
+  const strip = new THREE.Mesh(
+    new THREE.BoxGeometry(0.1, 3, 0.1),
+    new THREE.MeshBasicMaterial({ color: 0x003366 })
+  );
+  strip.position.set(x + 0.95, 2, z + 0.95);
+  scene.add(strip);
+});
+
+// ==================== ENEMY MESH ====================
+const enemyGroup = new THREE.Group();
+
+const bodyMat = new THREE.MeshLambertMaterial({ color: 0xcc2200, emissive: 0x220000 });
+const headMat = new THREE.MeshLambertMaterial({ color: 0xff3300, emissive: 0x330000 });
+const eyeMat  = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+const armorMat = new THREE.MeshLambertMaterial({ color: 0x881100, emissive: 0x110000 });
+
+// Legs
+[-0.22, 0.22].forEach(ox => {
+  const leg = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.7, 0.3), bodyMat);
+  leg.position.set(ox, 0.35, 0);
+  enemyGroup.add(leg);
+});
+// Torso
+const torso = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.75, 0.42), bodyMat);
+torso.position.y = 0.9;
+enemyGroup.add(torso);
+// Shoulder pads
+[-0.55, 0.55].forEach(ox => {
+  const sp = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.22, 0.48), armorMat);
+  sp.position.set(ox, 1.05, 0);
+  enemyGroup.add(sp);
+});
+// Arms
+[-0.6, 0.6].forEach(ox => {
+  const arm = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.6, 0.22), bodyMat);
+  arm.position.set(ox, 0.7, 0);
+  enemyGroup.add(arm);
+});
+// Head
+const head = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.5), headMat);
+head.position.y = 1.6;
+enemyGroup.add(head);
+// Eyes
+[-0.14, 0.14].forEach(ox => {
+  const eye = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), eyeMat);
+  eye.position.set(ox, 1.62, 0.26);
+  enemyGroup.add(eye);
+  // Eye glow
+  const eg = new THREE.PointLight(0xffee00, 0.6, 2);
+  eg.position.copy(eye.position);
+  enemyGroup.add(eg);
+});
+// Gun
+const gunMesh = new THREE.Mesh(
+  new THREE.BoxGeometry(0.12, 0.12, 0.55),
+  new THREE.MeshLambertMaterial({ color: 0x111111 })
+);
+gunMesh.position.set(0.55, 0.85, -0.35);
+enemyGroup.add(gunMesh);
+
+scene.add(enemyGroup);
+
+// ==================== GAME STATE ====================
+const keys = {};
+let gameOver = false;
+
+const player = {
+  x: 0, z: 15, yaw: 0,
+  health: 100, maxHealth: 100,
+  shootCooldown: 0,
+  SPEED: 7,
+  TURN_SPEED: 2.0,
+  SHOOT_RATE: 0.28,
+  EYE_H: 1.65
+};
+
+const enemy = {
+  x: 0, z: -14, yaw: Math.PI,
+  health: 100, maxHealth: 100,
+  shootTimer: 2.5,
+  jitterTimer: 0,
+  jitterX: 0, jitterZ: 0,
+  strafeAngle: 0,
+  SPEED: 3.8,
+  SHOOT_RATE: 2.2,
+  DAMAGE: 14
+};
+
+const bullets = [];
+
+// ==================== INPUT ====================
+document.addEventListener('keydown', e => {
+  keys[e.code] = true;
+  if (e.code === 'Space') e.preventDefault();
+  if (e.code === 'KeyR') restartGame();
+});
+document.addEventListener('keyup', e => { keys[e.code] = false; });
+
+// ==================== HUD ELEMENTS ====================
+const healthFill = document.getElementById('health-fill');
+const enemyFill  = document.getElementById('enemy-fill');
+const messageEl  = document.getElementById('message');
+const ammoEl     = document.getElementById('ammo');
+const shootFlash = document.getElementById('shoot-flash');
+const hitFlash   = document.getElementById('hit-flash');
+const crosshair  = document.getElementById('crosshair');
+
+function updateHUD() {
+  healthFill.style.width = Math.max(0, player.health / player.maxHealth * 100) + '%';
+  enemyFill.style.width  = Math.max(0, enemy.health  / enemy.maxHealth  * 100) + '%';
+  const pct = player.health / player.maxHealth;
+  const r = Math.round(255 * Math.min(1, 2 - 2*pct));
+  const g = Math.round(255 * Math.min(1, 2*pct));
+  healthFill.style.background = `rgb(${r},${g},0)`;
+}
+
+function flash(el, ms) {
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', ms);
+}
+
+// ==================== BULLETS ====================
+function spawnBullet(x, z, vx, vz, fromEnemy) {
+  const r = fromEnemy ? 0.14 : 0.09;
+  const col = fromEnemy ? 0xff3300 : 0x00ffee;
+  const geo = new THREE.SphereGeometry(r, 6, 6);
+  const mat = new THREE.MeshBasicMaterial({ color: col });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(x, 1.65, z);
+
+  // Glow sphere
+  const gmat = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.3 });
+  const glow = new THREE.Mesh(new THREE.SphereGeometry(r * 2.5, 6, 6), gmat);
+  mesh.add(glow);
+
+  // Attached point light
+  const bl = new THREE.PointLight(col, fromEnemy ? 2 : 1.5, fromEnemy ? 5 : 4);
+  mesh.add(bl);
+
+  scene.add(mesh);
+  bullets.push({ mesh, vx, vz, fromEnemy, life: 3.5 });
+}
+
+// ==================== PLAYER SHOOT ====================
+function playerShoot() {
+  if (player.shootCooldown > 0 || gameOver) return;
+  player.shootCooldown = player.SHOOT_RATE;
+
+  // Looking direction
+  const dirX = -Math.sin(player.yaw);
+  const dirZ = -Math.cos(player.yaw);
+
+  // Vector from player to enemy
+  const dx = enemy.x - player.x;
+  const dz = enemy.z - player.z;
+  const dist = Math.sqrt(dx*dx + dz*dz);
+  if (dist < 0.01) return;
+  const ex = dx / dist, ez = dz / dist;
+
+  // Dot = how directly we're aimed at enemy
+  const dot = dirX * ex + dirZ * ez;
+  // Cross = sin(angle) between look dir and enemy dir
+  const cross = Math.abs(dirX * ez - dirZ * ex);
+  // Perpendicular miss distance at target range
+  const missDistance = cross * dist;
+
+  if (dot > 0 && missDistance < 1.4 && dist < 38) {
+    // HIT
+    const dmg = 25;
+    enemy.health = Math.max(0, enemy.health - dmg);
+    flashEnemy();
+    updateHUD();
+    if (enemy.health <= 0) endGame(true);
+  }
+
+  // Spawn visual tracer
+  spawnBullet(player.x, player.z, dirX * 28, dirZ * 28, false);
+
+  // Effects
+  muzzleLight.intensity = 4;
+  setTimeout(() => muzzleLight.intensity = 0, 90);
+  flash(shootFlash, 55);
+  crosshair.style.color = '#fff';
+  setTimeout(() => crosshair.style.color = 'rgba(0,255,255,0.9)', 100);
+}
+
+function flashEnemy() {
+  bodyMat.emissive.setHex(0xaa0000);
+  headMat.emissive.setHex(0xaa0000);
+  setTimeout(() => {
+    bodyMat.emissive.setHex(0x220000);
+    headMat.emissive.setHex(0x330000);
+  }, 140);
+}
+
+// ==================== ENEMY AI ====================
+function updateEnemy(dt) {
+  if (gameOver) return;
+
+  const dx = player.x - enemy.x;
+  const dz = player.z - enemy.z;
+  const dist = Math.sqrt(dx*dx + dz*dz);
+
+  // Turn to face player
+  const targetYaw = Math.atan2(dx, dz);
+  let dy = targetYaw - enemy.yaw;
+  while (dy >  Math.PI) dy -= Math.PI * 2;
+  while (dy < -Math.PI) dy += Math.PI * 2;
+  enemy.yaw += dy * Math.min(1, dt * 4);
+
+  // Strafe / move jitter
+  enemy.jitterTimer -= dt;
+  if (enemy.jitterTimer <= 0) {
+    enemy.jitterTimer = 0.6 + Math.random() * 0.8;
+    enemy.strafeAngle = (Math.random() - 0.5) * Math.PI * 0.5;
+  }
+
+  if (dist > 3.5) {
+    const angle = Math.atan2(dx, dz) + enemy.strafeAngle * 0.4;
+    const spd = enemy.SPEED * dt;
+    let nx = enemy.x + Math.sin(angle) * spd;
+    let nz = enemy.z + Math.cos(angle) * spd;
+
+    // Arena boundary
+    nx = Math.max(-HALF + 1.2, Math.min(HALF - 1.2, nx));
+    nz = Math.max(-HALF + 1.2, Math.min(HALF - 1.2, nz));
+
+    // Pillar avoidance
+    const result = avoidPillars(nx, nz, 0.9);
+    enemy.x = result.x;
+    enemy.z = result.z;
+  }
+
+  // Shoot
+  enemy.shootTimer -= dt;
+  if (enemy.shootTimer <= 0) {
+    enemy.shootTimer = enemy.SHOOT_RATE + Math.random() * 0.8;
+    if (dist < 35) enemyShoot();
+  }
+
+  // Sync mesh
+  enemyGroup.position.set(enemy.x, 0, enemy.z);
+  enemyGroup.rotation.y = Math.atan2(player.x - enemy.x, player.z - enemy.z);
+}
+
+function enemyShoot() {
+  const dx = player.x - enemy.x;
+  const dz = player.z - enemy.z;
+  const dist = Math.sqrt(dx*dx + dz*dz);
+  const spread = 0.12;
+  const spd = 20;
+  const vx = (dx/dist + (Math.random()-0.5)*spread) * spd;
+  const vz = (dz/dist + (Math.random()-0.5)*spread) * spd;
+  spawnBullet(enemy.x, enemy.z, vx, vz, true);
+}
+
+// ==================== COLLISION HELPERS ====================
+function avoidPillars(x, z, radius) {
+  for (const [px, pz] of pillarPositions) {
+    const ddx = x - px, ddz = z - pz;
+    const d = Math.sqrt(ddx*ddx + ddz*ddz);
+    const minDist = radius + 1.1;
+    if (d < minDist && d > 0.001) {
+      x = px + (ddx/d) * minDist;
+      z = pz + (ddz/d) * minDist;
+    }
+  }
+  return { x, z };
+}
+
+// ==================== UPDATE BULLETS ====================
+function updateBullets(dt) {
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    const b = bullets[i];
+    b.mesh.position.x += b.vx * dt;
+    b.mesh.position.z += b.vz * dt;
+    b.life -= dt;
+
+    const bx = b.mesh.position.x, bz = b.mesh.position.z;
+
+    // Wall hit
+    if (Math.abs(bx) >= HALF || Math.abs(bz) >= HALF) b.life = 0;
+
+    if (b.fromEnemy) {
+      // Check hit on player
+      const ddx = bx - player.x, ddz = bz - player.z;
+      if (Math.sqrt(ddx*ddx + ddz*ddz) < 0.75) {
+        player.health = Math.max(0, player.health - enemy.DAMAGE);
+        b.life = 0;
+        flash(hitFlash, 220);
+        updateHUD();
+        if (player.health <= 0) endGame(false);
+      }
+    } else {
+      // Despawn player bullet on close approach to enemy
+      const ddx = bx - enemy.x, ddz = bz - enemy.z;
+      if (Math.sqrt(ddx*ddx + ddz*ddz) < 1.0) b.life = 0;
+    }
+
+    if (b.life <= 0) {
+      scene.remove(b.mesh);
+      bullets.splice(i, 1);
+    }
+  }
+}
+
+// ==================== UPDATE PLAYER ====================
+function updatePlayer(dt) {
+  if (gameOver) return;
+
+  if (keys['ArrowLeft'])  player.yaw += player.TURN_SPEED * dt;
+  if (keys['ArrowRight']) player.yaw -= player.TURN_SPEED * dt;
+
+  const spd = player.SPEED * dt;
+  if (keys['ArrowUp']) {
+    player.x -= Math.sin(player.yaw) * spd;
+    player.z -= Math.cos(player.yaw) * spd;
+  }
+  if (keys['ArrowDown']) {
+    player.x += Math.sin(player.yaw) * spd;
+    player.z += Math.cos(player.yaw) * spd;
+  }
+
+  // Clamp to arena
+  player.x = Math.max(-HALF + 0.8, Math.min(HALF - 0.8, player.x));
+  player.z = Math.max(-HALF + 0.8, Math.min(HALF - 0.8, player.z));
+
+  // Pillar collision
+  const nc = avoidPillars(player.x, player.z, 0.55);
+  player.x = nc.x; player.z = nc.z;
+
+  // Cooldown
+  if (player.shootCooldown > 0) player.shootCooldown -= dt;
+
+  // Shoot
+  if (keys['Space']) playerShoot();
+
+  // Ammo HUD
+  if (player.shootCooldown > 0) {
+    ammoEl.textContent = 'RELOADING...';
+    ammoEl.style.color = 'rgba(255,100,0,0.7)';
+  } else {
+    ammoEl.textContent = 'READY TO FIRE';
+    ammoEl.style.color = 'rgba(0,255,255,0.7)';
+  }
+
+  // Sync camera
+  camera.position.set(player.x, player.EYE_H, player.z);
+  camera.rotation.set(0, player.yaw, 0, 'YXZ');
+}
+
+// ==================== GAME OVER ====================
+function endGame(won) {
+  gameOver = true;
+  if (won) {
+    messageEl.innerHTML = 'YOU WIN!<br><span style="font-size:22px;color:#aaffaa;letter-spacing:3px">Press R to play again</span>';
+    messageEl.style.color = '#00ff44';
+    messageEl.style.textShadow = '0 0 40px #00ff44, 0 0 80px #004400';
+  } else {
+    messageEl.innerHTML = 'YOU DIED<br><span style="font-size:22px;color:#ffaaaa;letter-spacing:3px">Press R to play again</span>';
+    messageEl.style.color = '#ff2200';
+    messageEl.style.textShadow = '0 0 40px #ff2200, 0 0 80px #440000';
+  }
+  messageEl.style.display = 'block';
+}
+
+function restartGame() {
+  player.x = 0; player.z = 15; player.yaw = 0;
+  player.health = player.maxHealth;
+  player.shootCooldown = 0;
+
+  enemy.x = 0; enemy.z = -14; enemy.yaw = Math.PI;
+  enemy.health = enemy.maxHealth;
+  enemy.shootTimer = 2.5;
+  enemy.jitterTimer = 0;
+
+  bullets.forEach(b => scene.remove(b.mesh));
+  bullets.length = 0;
+
+  gameOver = false;
+  messageEl.style.display = 'none';
+  updateHUD();
+}
+
+// ==================== ANIMATE ====================
+let prevTime = 0;
+let tick = 0;
+
+function animate(t) {
+  requestAnimationFrame(animate);
+  const dt = Math.min((t - prevTime) / 1000, 0.05);
+  prevTime = t;
+  tick = t;
+
+  updatePlayer(dt);
+  updateEnemy(dt);
+  updateBullets(dt);
+
+  // Pulse center light
+  centerLight.intensity = 2.0 + Math.sin(t * 0.0015) * 0.5;
+
+  renderer.render(scene, camera);
+}
+
+updateHUD();
+animate(0);
+</script>
+</body>
+</html>
