@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #020205;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    user-select: none;
+}
+
+#ui {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    box-shadow: inset 0 0 100px rgba(0, 255, 255, 0.1);
+}
+
+#health, #score {
+    position: absolute;
+    top: 30px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+#health {
+    left: 40px;
+    color: #0f0;
+    text-shadow: 0 0 15px #0f0;
+    transition: color 0.2s, text-shadow 0.2s;
+}
+
+#score {
+    right: 40px;
+    color: #0ff;
+    text-shadow: 0 0 15px #0ff;
+}
+
+#instructions {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(0, 255, 255, 0.6);
+    font-size: 16px;
+    letter-spacing: 3px;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+#crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+}
+
+#crosshair::before, #crosshair::after {
+    content: '';
+    position: absolute;
+    background: rgba(0, 255, 255, 0.9);
+    box-shadow: 0 0 10px #0ff;
+}
+
+#crosshair::before {
+    top: 11px; left: 0; width: 24px; height: 2px;
+}
+
+#crosshair::after {
+    top: 0; left: 11px; width: 2px; height: 24px;
+}
+
+#damage-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, transparent 50%, rgba(255,0,0,0.5) 150%);
+    opacity: 0;
+    transition: opacity 0.1s;
+}
+
+#game-over {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background: rgba(10, 0, 10, 0.85);
+    padding: 60px 100px;
+    border: 2px solid #f0f;
+    box-shadow: 0 0 40px #f0f, inset 0 0 20px #f0f;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+#game-over h1 {
+    color: #f00;
+    text-shadow: 0 0 20px #f00, 0 0 40px #f0f;
+    margin: 0 0 10px 0;
+    font-size: 54px;
+    font-weight: 900;
+    letter-spacing: 5px;
+}
+
+#final-score {
+    margin-top: 20px;
+    font-size: 32px;
+    color: #0ff;
+    text-shadow: 0 0 15px #0ff;
+}
+
+.blink {
+    animation: blinker 1.5s linear infinite;
+}
+
+@keyframes blinker {
+    50% { opacity: 0.3; }
+}

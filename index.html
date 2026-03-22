@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Arena FPS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="ui">
+        <div id="health">HEALTH: 100</div>
+        <div id="score">SCORE: 0</div>
+        <div id="crosshair"></div>
+        <div id="damage-overlay"></div>
+        <div id="game-over">
+            <h1>SYSTEM FAILURE</h1>
+            <p style="font-size: 20px; color: rgba(255, 255, 255, 0.7);">AGENT DESTROYED</p>
+            <div id="final-score">SCORE: 0</div>
+            <p class="blink" style="margin-top: 40px; color: #0fff0f;">[ PRESS R TO REBOOT ]</p>
+        </div>
+        <div id="instructions">
+            ARROWS: MOVE &nbsp;&nbsp;|&nbsp;&nbsp; HOLD SHIFT: STRAFE &nbsp;&nbsp;|&nbsp;&nbsp; SPACE: FIRE
+        </div>
+    </div>
+    
+    <!-- Load Three.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
