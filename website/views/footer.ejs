@@ -1,0 +1,30 @@
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-phone"></i> <%= data.phone %></p>
+                    <p><i class="fas fa-envelope"></i> <a href="mailto:<%= data.email %>"><%= data.email %></a></p>
+                    <p><i class="fas fa-map-marker-alt"></i> <%= data.location %></p>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <p><a href="https://www.linkedin.com/in/<%= data.linkedin %>" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a></p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <p><a href="/about">About</a></p>
+                    <p><a href="/experience">Experience</a></p>
+                    <p><a href="/projects">Projects</a></p>
+                    <p><a href="/contact">Contact</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <%= new Date().getFullYear() %> Rich Burnside. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

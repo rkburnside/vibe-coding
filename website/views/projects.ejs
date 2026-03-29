@@ -1,0 +1,50 @@
+<%- include('header', { title: 'Projects' }) %>
+<%- include('nav', { section: 'projects' }) %>
+
+<main class="main-content">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Notable Projects</h1>
+        <p>Key accomplishments and initiatives</p>
+    </div>
+
+    <!-- Projects Section -->
+    <section class="projects-section">
+        <div class="container">
+            <div class="projects-grid">
+                <% data.projects.forEach((project, index) => { %>
+                    <div class="project-card">
+                        <div class="project-header">
+                            <h3><%= project.title %></h3>
+                            <p class="project-company"><%= project.company %></p>
+                        </div>
+                        <div class="project-body">
+                            <p><strong>Overview:</strong> <%= project.description %></p>
+                            <p><strong>Achievement:</strong> <%= project.achievement %></p>
+                        </div>
+                        <div class="project-footer">
+                            <span class="project-badge">Completed</span>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+
+            <!-- Additional Achievements -->
+            <div class="achievements-section">
+                <h2>Key Achievements</h2>
+                <ul class="achievements-list">
+                    <li><i class="fas fa-award"></i> Led development of RATS resulting in >$2-million lifetime cost savings</li>
+                    <li><i class="fas fa-award"></i> Directed assembly of >10,000 missile actuation systems with 36 months 100% quality</li>
+                    <li><i class="fas fa-award"></i> Successfully coordinated Navy program bidding and test development</li>
+                    <li><i class="fas fa-award"></i> Coordinated spacecraft transport for NASA with stakeholders from multiple states</li>
+                    <li><i class="fas fa-award"></i> Implemented SAP system sitewide and established fabrication time tracking</li>
+                    <li><i class="fas fa-award"></i> Designed contamination prevention shroud receiving award recognition</li>
+                    <li><i class="fas fa-award"></i> Managed redesign of spacecraft turnover cart drive system (pneumatic to electric)</li>
+                    <li><i class="fas fa-award"></i> Lead for LM Denver Innovation Garage and 3D printing instructor</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include('footer') %>

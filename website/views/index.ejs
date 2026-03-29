@@ -1,0 +1,69 @@
+<%- include('header', { title: 'Home' }) %>
+<%- include('nav', { section: 'home' }) %>
+
+<main class="main-content">
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1><%= data.name %></h1>
+                <p class="hero-subtitle"><%= data.title %></p>
+                <p class="hero-location"><i class="fas fa-map-marker-alt"></i> <%= data.location %></p>
+                <p class="hero-description"><%= data.summary.substring(0, 200) %>...</p>
+                <div class="hero-buttons">
+                    <a href="/about" class="btn btn-primary">Learn More</a>
+                    <a href="/contact" class="btn btn-secondary">Get In Touch</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section class="skills-section">
+        <div class="container">
+            <h2>Top Skills</h2>
+            <div class="skills-grid">
+                <% data.skills.slice(0, 6).forEach(skill => { %>
+                    <div class="skill-card">
+                        <i class="fas fa-check-circle"></i>
+                        <p><%= skill %></p>
+                    </div>
+                <% }); %>
+            </div>
+            <a href="/about" class="view-all">View All Skills →</a>
+        </div>
+    </section>
+
+    <!-- Experience Preview -->
+    <section class="experience-preview">
+        <div class="container">
+            <h2>Experience Highlights</h2>
+            <div class="experience-cards">
+                <% data.experience.slice(0, 2).forEach(exp => { %>
+                    <div class="exp-card">
+                        <h3><%= exp.role %></h3>
+                        <p class="company"><%= exp.company %></p>
+                        <p class="duration"><%= exp.duration %></p>
+                        <ul class="highlights-list">
+                            <% exp.highlights.slice(0, 3).forEach(highlight => { %>
+                                <li><%= highlight %></li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                <% }); %>
+            </div>
+            <a href="/experience" class="view-all">View Full Experience →</a>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container cta-content">
+            <h2>Ready to Work Together?</h2>
+            <p>I'm always interested in hearing about new opportunities and challenges.</p>
+            <a href="/contact" class="btn btn-primary">Contact Me</a>
+        </div>
+    </section>
+</main>
+
+<%- include('footer') %>

@@ -1,0 +1,63 @@
+<%- include('header', { title: 'Experience' }) %>
+<%- include('nav', { section: 'experience' }) %>
+
+<main class="main-content">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Professional Experience</h1>
+        <p>15+ years of aerospace and defense engineering</p>
+    </div>
+
+    <!-- Experience Timeline -->
+    <section class="experience-section">
+        <div class="container">
+            <div class="timeline">
+                <% data.experience.forEach((exp, index) => { %>
+                    <div class="timeline-item <%= index % 2 === 0 ? 'left' : 'right' %>">
+                        <div class="timeline-marker">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h3><%= exp.role %></h3>
+                            <p class="company"><%= exp.company %></p>
+                            <p class="location"><i class="fas fa-map-marker-alt"></i> <%= exp.location %></p>
+                            <p class="duration"><i class="fas fa-calendar"></i> <%= exp.duration %></p>
+                            <ul class="highlights">
+                                <% exp.highlights.forEach(highlight => { %>
+                                    <li><%= highlight %></li>
+                                <% }); %>
+                            </ul>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <h2>By The Numbers</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>15+</h3>
+                    <p>Years of Experience</p>
+                </div>
+                <div class="stat-card">
+                    <h3>4</h3>
+                    <p>Companies</p>
+                </div>
+                <div class="stat-card">
+                    <h3>100+</h3>
+                    <p>Projects Delivered</p>
+                </div>
+                <div class="stat-card">
+                    <h3>$2M+</h3>
+                    <p>Cost Savings Generated</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include('footer') %>

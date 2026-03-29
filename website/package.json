@@ -1,0 +1,17 @@
+{
+  "name": "rich-burnside-portfolio",
+  "version": "1.0.0",
+  "description": "Professional portfolio website for Rich Burnside",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["portfolio", "professional"],
+  "author": "Rich Burnside",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "ejs": "^3.1.8"
+  }
+}

@@ -1,0 +1,91 @@
+<%- include('header', { title: 'About' }) %>
+<%- include('nav', { section: 'about' }) %>
+
+<main class="main-content">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>About Me</h1>
+        <p>15+ years of engineering excellence and leadership</p>
+    </div>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-text">
+                    <h2>Professional Summary</h2>
+                    <p><%= data.summary %></p>
+                    
+                    <h3>What I Do</h3>
+                    <ul class="about-list">
+                        <li><strong>Systems Engineering:</strong> Design and optimize complex hardware lifecycle phases</li>
+                        <li><strong>Project Management:</strong> Lead cross-functional teams to deliver on-time, on-budget projects</li>
+                        <li><strong>Process Improvement:</strong> Identify and eliminate inefficiencies to boost productivity</li>
+                        <li><strong>Quality Assurance:</strong> Ensure highest standards through rigorous testing and validation</li>
+                        <li><strong>Leadership:</strong> Manage and motivate diverse teams of engineers and technicians</li>
+                        <li><strong>Problem Solving:</strong> Provide innovative solutions to complex technical challenges</li>
+                    </ul>
+                </div>
+
+                <div class="about-info">
+                    <div class="info-card">
+                        <h3>Contact Information</h3>
+                        <div class="info-item">
+                            <span class="label">Phone</span>
+                            <span class="value"><%= data.phone %></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Email</span>
+                            <span class="value"><a href="mailto:<%= data.email %>"><%= data.email %></a></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Location</span>
+                            <span class="value"><%= data.location %></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">LinkedIn</span>
+                            <span class="value"><a href="https://www.linkedin.com/in/<%= data.linkedin %>" target="_blank">linkedin.com/in/<%= data.linkedin %></a></span>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Skills</h3>
+                        <div class="skills-list">
+                            <% data.skills.forEach(skill => { %>
+                                <span class="skill-tag"><%= skill %></span>
+                            <% }); %>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>Languages</h3>
+                        <ul>
+                            <li>English (Native)</li>
+                            <% data.languages.forEach(lang => { %>
+                                <li><%= lang %></li>
+                            <% }); %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section class="education-section">
+        <div class="container">
+            <h2>Education</h2>
+            <div class="education-grid">
+                <% data.education.forEach(edu => { %>
+                    <div class="edu-card">
+                        <h3><%= edu.degree %></h3>
+                        <p class="school"><%= edu.school %></p>
+                        <p class="years"><%= edu.years %></p>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include('footer') %>
