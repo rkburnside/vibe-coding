@@ -1,0 +1,491 @@
+.shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgb(236 173 10 / 0.22), transparent 34%),
+    radial-gradient(circle at top right, rgb(32 157 215 / 0.16), transparent 38%),
+    radial-gradient(circle at bottom left, rgb(117 57 145 / 0.14), transparent 34%),
+    linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
+}
+
+.page {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 2rem;
+  min-height: 100vh;
+  padding: clamp(1.25rem, 2vw, 2rem);
+}
+
+.hero,
+.boardSurface {
+  border: 1px solid rgb(255 255 255 / 0.74);
+  background: rgb(255 255 255 / 0.72);
+  box-shadow: var(--panel-shadow);
+  backdrop-filter: blur(22px);
+}
+
+.hero {
+  display: grid;
+  gap: 1.5rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border-radius: 2rem;
+  animation: rise-in 600ms ease both;
+}
+
+.heroCopy {
+  display: grid;
+  gap: 1rem;
+  max-width: 48rem;
+}
+
+.eyebrow,
+.surfaceLabel,
+.columnBadge,
+.cardLabel {
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.eyebrow {
+  color: var(--blue-primary);
+}
+
+.hero h1 {
+  max-width: 15ch;
+  font-family: var(--font-display);
+  font-size: clamp(2.35rem, 5vw, 4.8rem);
+  line-height: 0.96;
+  color: var(--dark-navy);
+}
+
+.heroText {
+  max-width: 42rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--gray-text);
+}
+
+.heroStats {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+}
+
+.statCard {
+  padding: 1.15rem 1.2rem;
+  border-radius: 1.4rem;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.92), rgb(247 250 255 / 0.88));
+  border: 1px solid rgb(3 33 71 / 0.08);
+}
+
+.statCard span {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-family: var(--font-display);
+  font-size: 1.95rem;
+  color: var(--dark-navy);
+}
+
+.statCard p {
+  color: var(--gray-text);
+}
+
+.boardSurface {
+  display: grid;
+  gap: 1.5rem;
+  min-height: 0;
+  padding: clamp(1rem, 2vw, 1.6rem);
+  border-radius: 2rem;
+  animation: rise-in 700ms ease both;
+  animation-delay: 110ms;
+}
+
+.surfaceHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.surfaceLabel {
+  color: var(--purple-secondary);
+}
+
+.surfaceHeader h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
+  color: var(--dark-navy);
+}
+
+.surfaceStatus {
+  max-width: 18rem;
+  color: var(--gray-text);
+  text-align: right;
+}
+
+.columns {
+  display: grid;
+  gap: 1rem;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(18rem, 21rem);
+  overflow-x: auto;
+  padding-bottom: 0.4rem;
+  scrollbar-width: thin;
+  scroll-snap-type: x proximity;
+}
+
+.column {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  min-height: 34rem;
+  padding: 1rem;
+  border-radius: 1.6rem;
+  border: 1px solid rgb(3 33 71 / 0.08);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.94), rgb(248 250 255 / 0.9));
+  box-shadow: 0 18px 40px rgb(3 33 71 / 0.08);
+  scroll-snap-align: start;
+  animation: rise-in 640ms ease both;
+  animation-delay: calc(var(--stagger-index) * 85ms + 180ms);
+}
+
+.columnOver {
+  box-shadow:
+    0 22px 48px rgb(3 33 71 / 0.12),
+    inset 0 0 0 1px rgb(236 173 10 / 0.45);
+  transform: translateY(-2px);
+}
+
+.columnAccent {
+  height: 0.48rem;
+  border-radius: 999px;
+}
+
+.columnHeader {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.columnBadge {
+  color: var(--gray-text);
+}
+
+.columnTitle {
+  width: 100%;
+  margin-top: 0.25rem;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--dark-navy);
+}
+
+.columnTitle:focus {
+  color: var(--blue-primary);
+}
+
+.columnCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.2rem;
+  height: 2.2rem;
+  padding: 0 0.75rem;
+  border-radius: 999px;
+  background: rgb(3 33 71 / 0.06);
+  color: var(--dark-navy);
+  font-weight: 700;
+}
+
+.columnHint {
+  color: var(--gray-text);
+  font-size: 0.97rem;
+  line-height: 1.6;
+}
+
+.cardList {
+  display: grid;
+  align-content: start;
+  gap: 0.9rem;
+  min-height: 18rem;
+  padding: 0.35rem;
+  border-radius: 1.15rem;
+  background: rgb(3 33 71 / 0.03);
+  transition: background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.cardListActive {
+  background: rgb(236 173 10 / 0.12);
+  box-shadow: inset 0 0 0 1px rgb(236 173 10 / 0.22);
+}
+
+.card,
+.composer {
+  border-radius: 1.2rem;
+  border: 1px solid rgb(3 33 71 / 0.08);
+  background: rgb(255 255 255 / 0.98);
+  box-shadow: 0 18px 30px rgb(3 33 71 / 0.07);
+}
+
+.card {
+  display: grid;
+  gap: 0.95rem;
+  padding: 1rem;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.card:hover {
+  border-color: rgb(32 157 215 / 0.24);
+  box-shadow: 0 22px 36px rgb(3 33 71 / 0.1);
+}
+
+.cardDragging {
+  opacity: 0.42;
+}
+
+.cardOverlay {
+  box-shadow: 0 28px 52px rgb(3 33 71 / 0.16);
+  transform: rotate(1deg);
+}
+
+.cardAccent {
+  height: 0.4rem;
+  border-radius: 999px;
+}
+
+.cardTop {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.85rem;
+}
+
+.cardTop h3 {
+  margin-top: 0.25rem;
+  font-size: 1.08rem;
+  line-height: 1.35;
+  color: var(--dark-navy);
+}
+
+.cardLabel {
+  color: var(--gray-text);
+}
+
+.cardActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.dragHandle,
+.deleteButton,
+.addButton,
+.primaryButton,
+.secondaryButton {
+  border: 0;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.dragHandle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.22rem;
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 0.9rem;
+  background: rgb(3 33 71 / 0.06);
+  touch-action: none;
+}
+
+.dragHandle span {
+  width: 0.18rem;
+  height: 0.9rem;
+  border-radius: 999px;
+  background: rgb(3 33 71 / 0.45);
+}
+
+.deleteButton {
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.9rem;
+  background: rgb(117 57 145 / 0.08);
+  color: var(--purple-secondary);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.dragHandle:hover,
+.deleteButton:hover,
+.addButton:hover,
+.primaryButton:hover,
+.secondaryButton:hover {
+  transform: translateY(-1px);
+}
+
+.cardDetails {
+  color: var(--gray-text);
+  line-height: 1.65;
+}
+
+.emptyState {
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px dashed rgb(3 33 71 / 0.16);
+  color: var(--gray-text);
+  text-align: center;
+}
+
+.composer {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.field span {
+  color: var(--dark-navy);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  border: 1px solid rgb(3 33 71 / 0.12);
+  border-radius: 0.95rem;
+  background: rgb(248 250 255 / 0.98);
+  color: var(--dark-navy);
+  outline: none;
+}
+
+.field input {
+  min-height: 2.9rem;
+  padding: 0.8rem 0.95rem;
+}
+
+.field textarea {
+  padding: 0.85rem 0.95rem;
+  resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: rgb(32 157 215 / 0.55);
+  box-shadow: 0 0 0 4px rgb(32 157 215 / 0.12);
+}
+
+.composerActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.addButton,
+.primaryButton {
+  min-height: 3rem;
+  border-radius: 1rem;
+  background: linear-gradient(
+    135deg,
+    var(--purple-secondary),
+    color-mix(in srgb, var(--purple-secondary) 68%, white 32%)
+  );
+  color: white;
+  font-weight: 700;
+}
+
+.addButton {
+  padding: 0.9rem 1rem;
+}
+
+.primaryButton,
+.secondaryButton {
+  flex: 1;
+}
+
+.secondaryButton {
+  min-height: 3rem;
+  border-radius: 1rem;
+  background: rgb(3 33 71 / 0.06);
+  color: var(--dark-navy);
+  font-weight: 700;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 960px) {
+  .page {
+    padding: 1rem;
+  }
+
+  .surfaceHeader {
+    align-items: start;
+  }
+
+  .surfaceStatus {
+    max-width: none;
+    text-align: left;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero,
+  .boardSurface {
+    border-radius: 1.4rem;
+  }
+
+  .columns {
+    grid-auto-columns: minmax(17.5rem, 88vw);
+  }
+
+  .column {
+    min-height: 30rem;
+  }
+
+  .cardActions {
+    flex-direction: column;
+    align-items: end;
+  }
+
+  .composerActions {
+    flex-direction: column;
+  }
+}

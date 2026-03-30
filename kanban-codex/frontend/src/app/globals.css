@@ -1,0 +1,52 @@
+:root {
+  --accent-yellow: #ecad0a;
+  --blue-primary: #209dd7;
+  --purple-secondary: #753991;
+  --dark-navy: #032147;
+  --gray-text: #888888;
+  --font-display: "Space Grotesk Variable", "Segoe UI", sans-serif;
+  --font-body: "Manrope Variable", "Segoe UI", sans-serif;
+  --panel-shadow: 0 28px 60px rgb(3 33 71 / 0.12);
+  color-scheme: light;
+}
+
+html {
+  min-height: 100%;
+  background: #f3f7fc;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--dark-navy);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+*::selection {
+  background: rgb(236 173 10 / 0.28);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
