@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wordsearch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Chrome-ready puzzle</p>
+          <h1>Find every hidden word before the board runs cold.</h1>
+          <p class="subtitle">
+            Drag across letters horizontally, vertically, diagonally, and in reverse.
+          </p>
+        </div>
+        <button id="restartButton" class="restart-button" type="button">New round</button>
+      </header>
+
+      <main class="game-layout">
+        <section class="board-panel">
+          <div class="board-topline">
+            <div>
+              <p class="label">Grid</p>
+              <p id="statusText" class="status-text">Find all 8 words.</p>
+            </div>
+            <div class="legend">
+              <span><i class="swatch pending"></i> Active</span>
+              <span><i class="swatch found"></i> Found</span>
+            </div>
+          </div>
+          <div id="board" class="board" aria-label="Wordsearch puzzle board" role="grid"></div>
+        </section>
+
+        <aside class="sidebar">
+          <section class="card">
+            <p class="label">Targets</p>
+            <ul id="wordList" class="word-list"></ul>
+          </section>
+
+          <section id="celebrationCard" class="card celebration hidden" aria-live="polite">
+            <p class="label">Complete</p>
+            <h2>Puzzle solved</h2>
+            <p>You found every word on the board.</p>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
