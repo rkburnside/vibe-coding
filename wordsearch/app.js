@@ -1,28 +1,32 @@
-const PUZZLES = [
-  {
-    title: "Find all 8 words.",
-    words: ["CHROME", "PUZZLE", "SEARCH", "GRID", "DRAG", "MOUSE", "TOUCH", "FRAME"]
-  },
-  {
-    title: "A fresh board with 8 hidden words.",
-    words: ["SCRIPT", "CANVAS", "LETTER", "TRACE", "LINES", "BROWSER", "CLICK", "TILE"]
-  }
-];
-
+const DEFAULT_WORDS = ["CHROME", "PUZZLE", "SEARCH", "GRID", "DRAG", "MOUSE", "TOUCH", "FRAME"];
 const boardElement = document.getElementById("board");
 const wordListElement = document.getElementById("wordList");
 const statusTextElement = document.getElementById("statusText");
 const celebrationCardElement = document.getElementById("celebrationCard");
 const restartButton = document.getElementById("restartButton");
+const editSetupButton = document.getElementById("editSetupButton");
+const timerTextElement = document.getElementById("timerText");
+const setupScreenElement = document.getElementById("setupScreen");
+const gameScreenElement = document.getElementById("gameScreen");
+const setupFormElement = document.getElementById("setupForm");
+const wordsInputElement = document.getElementById("wordsInput");
+const boardSizeSelectElement = document.getElementById("boardSizeSelect");
+const minimumSizeTextElement = document.getElementById("minimumSizeText");
+const wordCountTextElement = document.getElementById("wordCountText");
+const sizeHintTextElement = document.getElementById("sizeHintText");
+const setupErrorElement = document.getElementById("setupError");
 
 let gameState = null;
+let timerIntervalId = null;
+let currentConfig = null;
 
-function buildPuzzleState(puzzle) {
-  const words = puzzle.words.map((word) => word.toUpperCase());
+function buildPuzzleState(config) {
+  const words = config.words.map((word) => word.toUpperCase());
   return {
-    title: puzzle.title,
+    title: `Find all ${words.length} words on the ${config.size} x ${config.size} board.`,
     words,
-    grid: generateGrid(words, 10),
+    size: config.size,
+    grid: generateGrid(words, config.size),
     foundWords: new Set(),
     foundCells: new Set(),
     activeCells: [],
@@ -35,9 +39,14 @@ function getCellKey(row, column) {
   return `${row},${column}`;
 }
 
-function choosePuzzle() {
-  const puzzle = PUZZLES[Math.floor(Math.random() * PUZZLES.length)];
-  gameState = buildPuzzleState(puzzle);
+function startGame(config) {
+  currentConfig = {
+    words: [...config.words],
+    size: config.size
+  };
+  gameState = buildPuzzleState(currentConfig);
+  resetTimer();
+  renderScreen("game");
   render();
 }
 
@@ -146,6 +155,7 @@ function render() {
 
 function renderBoard() {
   boardElement.innerHTML = "";
+  boardElement.style.gridTemplateColumns = `repeat(${gameState.size}, minmax(0, 1fr))`;
 
   for (let row = 0; row < gameState.grid.length; row += 1) {
     for (let column = 0; column < gameState.grid[row].length; column += 1) {
@@ -198,6 +208,10 @@ function updateStatus() {
       : `${gameState.title} ${remaining} remaining.`;
 
   celebrationCardElement.classList.toggle("hidden", remaining !== 0);
+
+  if (remaining === 0) {
+    stopTimer();
+  }
 }
 
 function handlePointerDown(event) {
@@ -301,9 +315,164 @@ function getPathFromStart(targetRow, targetColumn) {
   return path;
 }
 
-restartButton.addEventListener("click", choosePuzzle);
 boardElement.addEventListener("pointermove", handlePointerMove);
 window.addEventListener("pointerup", handlePointerUp);
 window.addEventListener("pointercancel", handlePointerUp);
 
-choosePuzzle();
+function resetTimer() {
+  stopTimer();
+  gameState.startedAt = Date.now();
+  updateTimerDisplay();
+  timerIntervalId = window.setInterval(updateTimerDisplay, 1000);
+}
+
+function stopTimer() {
+  if (timerIntervalId !== null) {
+    window.clearInterval(timerIntervalId);
+    timerIntervalId = null;
+  }
+}
+
+function updateTimerDisplay() {
+  const elapsedSeconds = Math.floor((Date.now() - gameState.startedAt) / 1000);
+  const minutes = String(Math.floor(elapsedSeconds / 60)).padStart(2, "0");
+  const seconds = String(elapsedSeconds % 60).padStart(2, "0");
+  timerTextElement.textContent = `${minutes}:${seconds}`;
+}
+
+function renderScreen(screen) {
+  const isGame = screen === "game";
+  setupScreenElement.classList.toggle("hidden", isGame);
+  gameScreenElement.classList.toggle("hidden", !isGame);
+  restartButton.classList.toggle("hidden", !isGame);
+  editSetupButton.classList.toggle("hidden", !isGame);
+}
+
+function normalizeWords(rawValue) {
+  return rawValue
+    .split(/\r?\n/)
+    .map((word) => word.trim().toUpperCase().replace(/[^A-Z]/g, ""))
+    .filter(Boolean);
+}
+
+function calculateMinimumBoardSize(words) {
+  if (words.length === 0) {
+    return 0;
+  }
+
+  const longestWord = Math.max(...words.map((word) => word.length));
+  const totalLetters = words.reduce((sum, word) => sum + word.length, 0);
+  return Math.max(longestWord, Math.ceil(Math.sqrt(totalLetters * 1.35)));
+}
+
+function buildSizeOptions(minimumSize) {
+  if (minimumSize === 0) {
+    return [];
+  }
+
+  const maxSize = Math.min(minimumSize + 4, 18);
+  const options = [];
+
+  for (let size = minimumSize; size <= maxSize; size += 1) {
+    options.push(size);
+  }
+
+  return options;
+}
+
+function updateSetupPreview() {
+  const words = normalizeWords(wordsInputElement.value);
+  const minimumSize = calculateMinimumBoardSize(words);
+  const sizeOptions = buildSizeOptions(minimumSize);
+
+  minimumSizeTextElement.textContent = `Minimum size: ${minimumSize} x ${minimumSize}`;
+  wordCountTextElement.textContent =
+    words.length === 1 ? "1 word ready" : `${words.length} words ready`;
+  sizeHintTextElement.textContent =
+    sizeOptions.length > 0
+      ? `Available sizes: ${sizeOptions.map((size) => `${size} x ${size}`).join(", ")}`
+      : "Add a few words to unlock size options.";
+
+  boardSizeSelectElement.innerHTML = "";
+  boardSizeSelectElement.disabled = sizeOptions.length === 0;
+
+  if (sizeOptions.length === 0) {
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = "Add words to choose a board size";
+    boardSizeSelectElement.appendChild(option);
+    return;
+  }
+
+  sizeOptions.forEach((size) => {
+    const option = document.createElement("option");
+    option.value = String(size);
+    option.textContent = `${size} x ${size}`;
+    boardSizeSelectElement.appendChild(option);
+  });
+}
+
+function showSetupError(message) {
+  setupErrorElement.textContent = message;
+  setupErrorElement.classList.remove("hidden");
+}
+
+function clearSetupError() {
+  setupErrorElement.textContent = "";
+  setupErrorElement.classList.add("hidden");
+}
+
+function handleSetupSubmit(event) {
+  event.preventDefault();
+  const words = normalizeWords(wordsInputElement.value);
+
+  if (words.length < 2) {
+    showSetupError("Enter at least two words to build a puzzle.");
+    return;
+  }
+
+  const minimumSize = calculateMinimumBoardSize(words);
+  const selectedSize = Number(boardSizeSelectElement.value);
+
+  if (!selectedSize || selectedSize < minimumSize) {
+    showSetupError("Choose one of the available board sizes before starting.");
+    return;
+  }
+
+  clearSetupError();
+
+  try {
+    startGame({ words, size: selectedSize });
+  } catch (error) {
+    showSetupError("That size is a little too tight for this list. Try a larger board.");
+  }
+}
+
+function returnToSetup() {
+  stopTimer();
+  if (gameState) {
+    gameState.pointerDown = false;
+  }
+  timerTextElement.textContent = "00:00";
+  renderScreen("setup");
+}
+
+function restartCurrentGame() {
+  if (!currentConfig) {
+    return;
+  }
+
+  startGame(currentConfig);
+}
+
+restartButton.addEventListener("click", restartCurrentGame);
+editSetupButton.addEventListener("click", returnToSetup);
+setupFormElement.addEventListener("submit", handleSetupSubmit);
+wordsInputElement.addEventListener("input", () => {
+  clearSetupError();
+  updateSetupPreview();
+});
+
+wordsInputElement.value = DEFAULT_WORDS.join("\n");
+updateSetupPreview();
+renderScreen("setup");

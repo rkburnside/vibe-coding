@@ -55,12 +55,11 @@ select {
   display: flex;
   justify-content: space-between;
   gap: 24px;
-  align-items: flex-start;
-  padding: 28px;
-  border-radius: 28px;
+  align-items: center;
+  padding: 18px 24px;
+  border-radius: 24px;
 }
 
-.eyebrow,
 .label {
   margin: 0 0 8px;
   font-size: 0.78rem;
@@ -77,22 +76,43 @@ select {
 }
 
 .hero h1 {
-  max-width: 12ch;
-  font-size: clamp(2.3rem, 5vw, 4.6rem);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  text-transform: lowercase;
 }
 
 .subtitle,
 .status-text,
 .card p,
 .legend,
-.word-list {
+.word-list,
+.setup-copy,
+.info-text,
+.info-subtext {
   color: var(--muted);
 }
 
-.subtitle {
-  max-width: 60ch;
-  margin: 14px 0 0;
-  font-size: 1rem;
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.timer-label {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.timer-text {
+  margin-left: 8px;
+  color: var(--ink);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .restart-button {
@@ -113,11 +133,127 @@ select {
   box-shadow: 0 18px 34px rgba(240, 93, 35, 0.34);
 }
 
+.secondary-button {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .game-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.75fr);
   gap: 24px;
   margin-top: 24px;
+}
+
+.setup-screen {
+  margin-top: 24px;
+}
+
+.setup-panel {
+  display: grid;
+  gap: 24px;
+  padding: 28px;
+  border-radius: 28px;
+  backdrop-filter: blur(18px);
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: var(--shadow);
+}
+
+.setup-panel h2 {
+  margin: 0;
+  font-family: "Sora", sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+}
+
+.setup-copy {
+  margin: 12px 0 0;
+  max-width: 56ch;
+}
+
+.setup-form {
+  display: grid;
+  gap: 20px;
+}
+
+.field {
+  display: grid;
+  gap: 10px;
+}
+
+.field span {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.field textarea,
+.field select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  padding: 14px 16px;
+  color: var(--ink);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 220px;
+  line-height: 1.5;
+}
+
+.field textarea:focus-visible,
+.field select:focus-visible {
+  outline: 2px solid rgba(240, 93, 35, 0.28);
+  outline-offset: 2px;
+}
+
+.setup-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.info-card {
+  min-height: 100%;
+}
+
+.info-text,
+.info-subtext {
+  margin: 0;
+}
+
+.info-subtext {
+  margin-top: 10px;
+}
+
+.field.compact select {
+  margin-top: 4px;
+}
+
+.setup-error {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(217, 72, 15, 0.1);
+  color: var(--accent-strong);
+}
+
+.start-button {
+  justify-self: start;
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, var(--found) 0%, #1ea896 100%);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(23, 126, 137, 0.24);
 }
 
 .board-panel,
@@ -172,7 +308,6 @@ select {
 
 .board {
   display: grid;
-  grid-template-columns: repeat(10, minmax(0, 1fr));
   gap: 8px;
   user-select: none;
   touch-action: none;
@@ -273,17 +408,14 @@ select {
 }
 
 @media (max-width: 920px) {
+  .setup-grid,
   .game-layout {
     grid-template-columns: 1fr;
   }
 
   .hero {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .hero h1 {
-    max-width: none;
+    flex-direction: row;
+    align-items: center;
   }
 }
 
@@ -294,15 +426,26 @@ select {
   }
 
   .hero,
+  .setup-panel,
   .board-panel,
   .card {
     border-radius: 22px;
   }
 
   .hero,
+  .setup-panel,
   .board-panel,
   .card {
     padding: 18px;
+  }
+
+  .hero {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-actions {
+    justify-content: space-between;
   }
 
   .board {

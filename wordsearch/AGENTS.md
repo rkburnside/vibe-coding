@@ -8,6 +8,14 @@
 - Users should be able to select letters with mouse or touch drag
 - A valid selection should highlight the found word and mark it complete in the word list
 - Support words in horizontal, vertical, diagonal directions, and reverse
+- the title box should only be 1 row
+- MVP will include a timer that resets at the start of every game
+- do not include the title "chrome ready puzzle"
+- make the title: "word search"
+- enable a start page that will allows configuring the game's board size
+- add the feature where the player can provide the list of words
+- the app will calculate the minimum word search board size and provide size options
+
 - Include at least one built-in puzzle on first load so the app is immediately playable
 - Keep the feature set simple: no accounts, no backend, no multiplayer
 - The priority is a polished, playful, high-quality UI that feels great in the browser

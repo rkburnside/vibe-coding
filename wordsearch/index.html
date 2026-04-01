@@ -15,43 +15,82 @@
   <body>
     <div class="app-shell">
       <header class="hero">
-        <div>
-          <p class="eyebrow">Chrome-ready puzzle</p>
-          <h1>Find every hidden word before the board runs cold.</h1>
-          <p class="subtitle">
-            Drag across letters horizontally, vertically, diagonally, and in reverse.
-          </p>
+        <h1>Word Search</h1>
+        <div class="hero-actions">
+          <p class="timer-label">Time <span id="timerText" class="timer-text">00:00</span></p>
+          <button id="editSetupButton" class="secondary-button hidden" type="button">Edit setup</button>
+          <button id="restartButton" class="restart-button hidden" type="button">New round</button>
         </div>
-        <button id="restartButton" class="restart-button" type="button">New round</button>
       </header>
 
-      <main class="game-layout">
-        <section class="board-panel">
-          <div class="board-topline">
+      <main>
+        <section id="setupScreen" class="setup-screen">
+          <section class="setup-panel">
             <div>
-              <p class="label">Grid</p>
-              <p id="statusText" class="status-text">Find all 8 words.</p>
+              <p class="label">Setup</p>
+              <h2>Build your next puzzle</h2>
+              <p class="setup-copy">
+                Enter one word per line, then choose a board size from the valid options.
+              </p>
             </div>
-            <div class="legend">
-              <span><i class="swatch pending"></i> Active</span>
-              <span><i class="swatch found"></i> Found</span>
-            </div>
-          </div>
-          <div id="board" class="board" aria-label="Wordsearch puzzle board" role="grid"></div>
+
+            <form id="setupForm" class="setup-form">
+              <label class="field" for="wordsInput">
+                <span>Your words</span>
+                <textarea id="wordsInput" rows="10" spellcheck="false"></textarea>
+              </label>
+
+              <div class="setup-grid">
+                <div class="card info-card">
+                  <p class="label">Board size</p>
+                  <p id="minimumSizeText" class="info-text">Minimum size: 0 x 0</p>
+                  <label class="field compact" for="boardSizeSelect">
+                    <span>Choose a size</span>
+                    <select id="boardSizeSelect"></select>
+                  </label>
+                </div>
+
+                <div class="card info-card">
+                  <p class="label">Preview</p>
+                  <p id="wordCountText" class="info-text">0 words ready</p>
+                  <p id="sizeHintText" class="info-subtext">Add a few words to unlock size options.</p>
+                </div>
+              </div>
+
+              <p id="setupError" class="setup-error hidden" aria-live="polite"></p>
+              <button class="start-button" type="submit">Start game</button>
+            </form>
+          </section>
         </section>
 
-        <aside class="sidebar">
-          <section class="card">
-            <p class="label">Targets</p>
-            <ul id="wordList" class="word-list"></ul>
+        <section id="gameScreen" class="game-layout hidden">
+          <section class="board-panel">
+            <div class="board-topline">
+              <div>
+                <p class="label">Grid</p>
+                <p id="statusText" class="status-text">Find every word.</p>
+              </div>
+              <div class="legend">
+                <span><i class="swatch pending"></i> Active</span>
+                <span><i class="swatch found"></i> Found</span>
+              </div>
+            </div>
+            <div id="board" class="board" aria-label="Wordsearch puzzle board" role="grid"></div>
           </section>
 
-          <section id="celebrationCard" class="card celebration hidden" aria-live="polite">
-            <p class="label">Complete</p>
-            <h2>Puzzle solved</h2>
-            <p>You found every word on the board.</p>
-          </section>
-        </aside>
+          <aside class="sidebar">
+            <section class="card">
+              <p class="label">Targets</p>
+              <ul id="wordList" class="word-list"></ul>
+            </section>
+
+            <section id="celebrationCard" class="card celebration hidden" aria-live="polite">
+              <p class="label">Complete</p>
+              <h2>Puzzle solved</h2>
+              <p>You found every word on the board.</p>
+            </section>
+          </aside>
+        </section>
       </main>
     </div>
 
