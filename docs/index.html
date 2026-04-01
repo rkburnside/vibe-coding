@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wordsearch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <h1>Word Search</h1>
+        <div class="hero-actions">
+          <p class="timer-label">Time <span id="timerText" class="timer-text">00:00</span></p>
+          <button id="editSetupButton" class="secondary-button hidden" type="button">Edit setup</button>
+          <button id="restartButton" class="restart-button hidden" type="button">New round</button>
+        </div>
+      </header>
+
+      <main>
+        <section id="setupScreen" class="setup-screen">
+          <section class="setup-panel">
+            <div>
+              <p class="label">Setup</p>
+              <h2>Build your next puzzle</h2>
+              <p class="setup-copy">
+                Enter up to 30 words, one per line, then choose a board size from the valid options.
+              </p>
+            </div>
+
+            <form id="setupForm" class="setup-form">
+              <label class="field" for="wordsInput">
+                <span>Your words</span>
+                <textarea id="wordsInput" rows="10" spellcheck="false"></textarea>
+              </label>
+
+              <div class="setup-grid">
+                <div class="card info-card">
+                  <p class="label">Board size</p>
+                  <p id="minimumSizeText" class="info-text">Minimum size: 0 x 0</p>
+                  <label class="field compact" for="boardSizeSelect">
+                    <span>Choose a size</span>
+                    <select id="boardSizeSelect"></select>
+                  </label>
+                </div>
+
+                <div class="card info-card">
+                  <p class="label">Preview</p>
+                  <p id="wordCountText" class="info-text">0 words ready</p>
+                  <p id="sizeHintText" class="info-subtext">Add a few words to unlock size options.</p>
+                </div>
+              </div>
+
+              <p id="setupError" class="setup-error hidden" aria-live="polite"></p>
+              <button class="start-button" type="submit">Start game</button>
+            </form>
+          </section>
+        </section>
+
+        <section id="gameScreen" class="game-layout hidden">
+          <section class="words-panel card">
+            <ul id="wordList" class="word-list"></ul>
+          </section>
+
+          <section class="board-panel">
+            <div class="board-topline">
+              <div>
+                <p id="statusText" class="status-text">0 of 0 words found</p>
+              </div>
+            </div>
+            <div id="board" class="board" aria-label="Wordsearch puzzle board" role="grid"></div>
+          </section>
+
+          <section id="celebrationCard" class="card celebration hidden" aria-live="polite">
+            <p class="label">Complete</p>
+            <h2>Puzzle solved</h2>
+            <p>You found every word on the board.</p>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
