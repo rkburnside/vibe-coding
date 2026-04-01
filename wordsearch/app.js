@@ -1,6 +1,21 @@
 const DEFAULT_WORDS = ["CHROME", "PUZZLE", "SEARCH", "GRID", "DRAG", "MOUSE", "TOUCH", "FRAME"];
 const MAX_WORDS = 30;
+const FOUND_WORD_COLORS = [
+  "#e4572e",
+  "#3a86ff",
+  "#2a9d8f",
+  "#ff006e",
+  "#8338ec",
+  "#ffbe0b",
+  "#118ab2",
+  "#ef476f",
+  "#06d6a0",
+  "#fb5607",
+  "#4361ee",
+  "#7cb518"
+];
 const boardElement = document.getElementById("board");
+const boardOverlayElement = document.getElementById("boardOverlay");
 const wordListElement = document.getElementById("wordList");
 const statusTextElement = document.getElementById("statusText");
 const celebrationCardElement = document.getElementById("celebrationCard");
@@ -28,7 +43,7 @@ function buildPuzzleState(config) {
     size: config.size,
     grid: generateGrid(words, config.size),
     foundWords: new Set(),
-    foundCells: new Set(),
+    foundWordPaths: [],
     activeCells: [],
     pointerDown: false,
     activeDirection: null
@@ -154,6 +169,7 @@ function shuffle(items) {
 
 function render() {
   renderBoard();
+  renderFoundWordOverlay();
   renderWordList();
   updateStatus();
 }
@@ -175,9 +191,7 @@ function renderBoard() {
       button.setAttribute("role", "gridcell");
       button.setAttribute("aria-label", `Row ${row + 1} Column ${column + 1}: ${button.textContent}`);
 
-      if (gameState.foundCells.has(key)) {
-        button.classList.add("found");
-      } else if (gameState.activeCells.some((cell) => cell.row === row && cell.column === column)) {
+      if (gameState.activeCells.some((cell) => cell.row === row && cell.column === column)) {
         button.classList.add("selected");
       }
 
@@ -185,6 +199,75 @@ function renderBoard() {
       boardElement.appendChild(button);
     }
   }
+}
+
+function renderFoundWordOverlay() {
+  boardOverlayElement.innerHTML = "";
+
+  const boardRect = boardElement.getBoundingClientRect();
+  if (!boardRect.width || !boardRect.height) {
+    return;
+  }
+
+  boardOverlayElement.setAttribute("viewBox", `0 0 ${boardRect.width} ${boardRect.height}`);
+
+  gameState.foundWordPaths.forEach((entry) => {
+    const firstCell = getCellElement(entry.cells[0]);
+    const lastCell = getCellElement(entry.cells[entry.cells.length - 1]);
+
+    if (!firstCell || !lastCell) {
+      return;
+    }
+
+    const firstRect = firstCell.getBoundingClientRect();
+    const lastRect = lastCell.getBoundingClientRect();
+    const startX = firstRect.left - boardRect.left + firstRect.width / 2;
+    const startY = firstRect.top - boardRect.top + firstRect.height / 2;
+    const endX = lastRect.left - boardRect.left + lastRect.width / 2;
+    const endY = lastRect.top - boardRect.top + lastRect.height / 2;
+    const cellSize = Math.min(firstRect.width, firstRect.height);
+    const radius = Math.max(8, cellSize * 0.42);
+    const outlineWidth = Math.max(2.5, cellSize * 0.1);
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+    const length = Math.hypot(deltaX, deltaY) || 1;
+    const midpointX = (startX + endX) / 2;
+    const midpointY = (startY + endY) / 2;
+    const totalLength = length + radius * 1.8;
+    const angle = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
+
+    const halo = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    halo.setAttribute("x", String(midpointX - totalLength / 2));
+    halo.setAttribute("y", String(midpointY - radius));
+    halo.setAttribute("width", String(totalLength));
+    halo.setAttribute("height", String(radius * 2));
+    halo.setAttribute("rx", String(radius));
+    halo.setAttribute("ry", String(radius));
+    halo.setAttribute("fill", "none");
+    halo.setAttribute("stroke", "rgba(255, 255, 255, 0.9)");
+    halo.setAttribute("stroke-width", String(outlineWidth + 2));
+    halo.setAttribute("transform", `rotate(${angle} ${midpointX} ${midpointY})`);
+
+    const stroke = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    stroke.setAttribute("x", String(midpointX - totalLength / 2));
+    stroke.setAttribute("y", String(midpointY - radius));
+    stroke.setAttribute("width", String(totalLength));
+    stroke.setAttribute("height", String(radius * 2));
+    stroke.setAttribute("rx", String(radius));
+    stroke.setAttribute("ry", String(radius));
+    stroke.setAttribute("fill", "none");
+    stroke.setAttribute("stroke", entry.color);
+    stroke.setAttribute("stroke-width", String(outlineWidth));
+    stroke.setAttribute("opacity", "0.95");
+    stroke.setAttribute("transform", `rotate(${angle} ${midpointX} ${midpointY})`);
+
+    boardOverlayElement.appendChild(halo);
+    boardOverlayElement.appendChild(stroke);
+  });
+}
+
+function getCellElement(cell) {
+  return boardElement.querySelector(`[data-row="${cell.row}"][data-column="${cell.column}"]`);
 }
 
 function renderWordList() {
@@ -263,7 +346,11 @@ function handlePointerUp() {
 
   if (matchedWord) {
     gameState.foundWords.add(matchedWord);
-    gameState.activeCells.forEach(({ row, column }) => gameState.foundCells.add(getCellKey(row, column)));
+    gameState.foundWordPaths.push({
+      word: matchedWord,
+      color: FOUND_WORD_COLORS[gameState.foundWordPaths.length % FOUND_WORD_COLORS.length],
+      cells: gameState.activeCells.map(({ row, column }) => ({ row, column }))
+    });
   }
 
   gameState.pointerDown = false;
@@ -487,3 +574,9 @@ wordsInputElement.addEventListener("input", () => {
 wordsInputElement.value = DEFAULT_WORDS.join("\n");
 updateSetupPreview();
 renderScreen("setup");
+
+window.addEventListener("resize", () => {
+  if (gameState) {
+    renderFoundWordOverlay();
+  }
+});

@@ -302,6 +302,22 @@ select {
   margin: 0 auto;
 }
 
+.board-wrap {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.board-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
 .cell {
   aspect-ratio: 1;
   border: 0;
@@ -331,9 +347,9 @@ select {
 }
 
 .cell.found {
-  background: var(--found-soft);
-  color: var(--found);
-  box-shadow: inset 0 0 0 2px rgba(23, 126, 137, 0.24);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink);
+  box-shadow: none;
 }
 
 .words-panel {

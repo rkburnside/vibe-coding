@@ -74,7 +74,10 @@
                 <p id="statusText" class="status-text">0 of 0 words found</p>
               </div>
             </div>
-            <div id="board" class="board" aria-label="Wordsearch puzzle board" role="grid"></div>
+            <div class="board-wrap">
+              <div id="board" class="board" aria-label="Wordsearch puzzle board" role="grid"></div>
+              <svg id="boardOverlay" class="board-overlay" aria-hidden="true"></svg>
+            </div>
           </section>
 
           <section id="celebrationCard" class="card celebration hidden" aria-live="polite">
