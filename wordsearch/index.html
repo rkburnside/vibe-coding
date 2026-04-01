@@ -64,32 +64,24 @@
         </section>
 
         <section id="gameScreen" class="game-layout hidden">
+          <section class="words-panel card">
+            <ul id="wordList" class="word-list"></ul>
+          </section>
+
           <section class="board-panel">
             <div class="board-topline">
               <div>
-                <p class="label">Grid</p>
-                <p id="statusText" class="status-text">Find every word.</p>
-              </div>
-              <div class="legend">
-                <span><i class="swatch pending"></i> Active</span>
-                <span><i class="swatch found"></i> Found</span>
+                <p id="statusText" class="status-text">0 of 0 words found</p>
               </div>
             </div>
             <div id="board" class="board" aria-label="Wordsearch puzzle board" role="grid"></div>
           </section>
 
-          <aside class="sidebar">
-            <section class="card">
-              <p class="label">Targets</p>
-              <ul id="wordList" class="word-list"></ul>
-            </section>
-
-            <section id="celebrationCard" class="card celebration hidden" aria-live="polite">
-              <p class="label">Complete</p>
-              <h2>Puzzle solved</h2>
-              <p>You found every word on the board.</p>
-            </section>
-          </aside>
+          <section id="celebrationCard" class="card celebration hidden" aria-live="polite">
+            <p class="label">Complete</p>
+            <h2>Puzzle solved</h2>
+            <p>You found every word on the board.</p>
+          </section>
         </section>
       </main>
     </div>

@@ -24,7 +24,6 @@ let currentConfig = null;
 function buildPuzzleState(config) {
   const words = config.words.map((word) => word.toUpperCase());
   return {
-    title: `Find all ${words.length} words on the ${config.size} x ${config.size} board.`,
     words,
     size: config.size,
     grid: generateGrid(words, config.size),
@@ -193,29 +192,22 @@ function renderWordList() {
 
   gameState.words.forEach((word) => {
     const item = document.createElement("li");
-    const tag = document.createElement("span");
 
     item.className = gameState.foundWords.has(word) ? "found" : "pending";
     item.textContent = word;
-
-    tag.className = "tag";
-    tag.textContent = gameState.foundWords.has(word) ? "Found" : "Hidden";
-    item.appendChild(tag);
 
     wordListElement.appendChild(item);
   });
 }
 
 function updateStatus() {
-  const remaining = gameState.words.length - gameState.foundWords.size;
-  statusTextElement.textContent =
-    remaining === 0
-      ? "Every word is locked in."
-      : `${gameState.title} ${remaining} remaining.`;
+  const foundCount = gameState.foundWords.size;
+  const totalCount = gameState.words.length;
+  statusTextElement.textContent = `${foundCount} of ${totalCount} words found`;
 
-  celebrationCardElement.classList.toggle("hidden", remaining !== 0);
+  celebrationCardElement.classList.toggle("hidden", foundCount !== totalCount);
 
-  if (remaining === 0) {
+  if (foundCount === totalCount) {
     stopTimer();
   }
 }
