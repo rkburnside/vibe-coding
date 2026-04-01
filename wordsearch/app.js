@@ -1,4 +1,5 @@
 const DEFAULT_WORDS = ["CHROME", "PUZZLE", "SEARCH", "GRID", "DRAG", "MOUSE", "TOUCH", "FRAME"];
+const MAX_WORDS = 30;
 const boardElement = document.getElementById("board");
 const wordListElement = document.getElementById("wordList");
 const statusTextElement = document.getElementById("statusText");
@@ -61,20 +62,25 @@ function generateGrid(words, size) {
     { row: -1, column: -1 },
     { row: -1, column: 1 }
   ];
-  const maxAttempts = 300;
+  const diagonalDirections = directions.filter(
+    (direction) => Math.abs(direction.row) === 1 && Math.abs(direction.column) === 1
+  );
+  const maxAttempts = 600;
+  const diagonalWordTarget = Math.ceil(words.length / 2);
 
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
     const grid = Array.from({ length: size }, () => Array(size).fill(""));
     let allPlaced = true;
-
     const shuffledWords = shuffle([...words]);
+    const diagonalWords = new Set(shuffledWords.slice(0, diagonalWordTarget));
 
     for (const word of shuffledWords) {
       const placements = [];
+      const allowedDirections = diagonalWords.has(word) ? diagonalDirections : directions;
 
       for (let row = 0; row < size; row += 1) {
         for (let column = 0; column < size; column += 1) {
-          for (const direction of directions) {
+          for (const direction of allowedDirections) {
             if (canPlaceWord(grid, word, row, column, direction)) {
               placements.push({ row, column, direction });
             }
@@ -370,7 +376,7 @@ function buildSizeOptions(minimumSize) {
     return [];
   }
 
-  const maxSize = Math.min(minimumSize + 4, 18);
+  const maxSize = minimumSize + 8;
   const options = [];
 
   for (let size = minimumSize; size <= maxSize; size += 1) {
@@ -382,16 +388,22 @@ function buildSizeOptions(minimumSize) {
 
 function updateSetupPreview() {
   const words = normalizeWords(wordsInputElement.value);
-  const minimumSize = calculateMinimumBoardSize(words);
+  const limitedWords = words.slice(0, MAX_WORDS);
+  const ignoredWordCount = Math.max(0, words.length - MAX_WORDS);
+  const minimumSize = calculateMinimumBoardSize(limitedWords);
   const sizeOptions = buildSizeOptions(minimumSize);
 
   minimumSizeTextElement.textContent = `Minimum size: ${minimumSize} x ${minimumSize}`;
   wordCountTextElement.textContent =
-    words.length === 1 ? "1 word ready" : `${words.length} words ready`;
+    limitedWords.length === 1 ? "1 word ready" : `${limitedWords.length} words ready`;
   sizeHintTextElement.textContent =
     sizeOptions.length > 0
       ? `Available sizes: ${sizeOptions.map((size) => `${size} x ${size}`).join(", ")}`
       : "Add a few words to unlock size options.";
+
+  if (ignoredWordCount > 0) {
+    sizeHintTextElement.textContent += ` Only the first ${MAX_WORDS} words will be used.`;
+  }
 
   boardSizeSelectElement.innerHTML = "";
   boardSizeSelectElement.disabled = sizeOptions.length === 0;
@@ -424,7 +436,14 @@ function clearSetupError() {
 
 function handleSetupSubmit(event) {
   event.preventDefault();
-  const words = normalizeWords(wordsInputElement.value);
+  const normalizedWords = normalizeWords(wordsInputElement.value);
+
+  if (normalizedWords.length > MAX_WORDS) {
+    showSetupError(`Use ${MAX_WORDS} words or fewer to start a game.`);
+    return;
+  }
+
+  const words = normalizedWords.slice(0, MAX_WORDS);
 
   if (words.length < 2) {
     showSetupError("Enter at least two words to build a puzzle.");

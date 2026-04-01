@@ -349,31 +349,37 @@ select {
 
 .sidebar {
   display: grid;
-  gap: 24px;
+  gap: 18px;
+  align-content: start;
 }
 
 .card {
-  padding: 22px;
+  padding: 18px;
 }
 
 .word-list {
   list-style: none;
   padding: 0;
-  margin: 18px 0 0;
+  margin: 14px 0 0;
   display: grid;
-  gap: 12px;
+  gap: 8px;
+  max-height: min(70vh, 760px);
+  overflow: auto;
+  padding-right: 4px;
 }
 
 .word-list li {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 13px 15px;
-  border-radius: 16px;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.64);
   border: 1px solid var(--line);
   transition: transform 140ms ease, border-color 140ms ease, color 140ms ease;
+  font-size: 0.92rem;
+  line-height: 1.2;
 }
 
 .word-list li.pending {
@@ -390,11 +396,12 @@ select {
 
 .tag {
   display: inline-flex;
-  padding: 5px 9px;
+  padding: 4px 8px;
   border-radius: 999px;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   letter-spacing: 0.04em;
   background: rgba(31, 40, 64, 0.06);
+  white-space: nowrap;
 }
 
 .celebration {
