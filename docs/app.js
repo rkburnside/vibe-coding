@@ -1,6 +1,197 @@
-const DEFAULT_WORDS = ["CHROME", "PUZZLE", "SEARCH", "GRID", "DRAG", "MOUSE", "TOUCH", "FRAME"];
+const DEFAULT_WORDS = [
+  "ACORN",
+  "AMBER",
+  "ANCHOR",
+  "APPLE",
+  "ARCADE",
+  "ASTEROID",
+  "ATLAS",
+  "AURORA",
+  "AVALANCHE",
+  "BAMBOO",
+  "BANANA",
+  "BEACON",
+  "BLIZZARD",
+  "BONFIRE",
+  "BRIDGE",
+  "BUTTERCUP",
+  "CACTUS",
+  "CAMERA",
+  "CANDLE",
+  "CARAMEL",
+  "CASCADE",
+  "CASTLE",
+  "CAVERN",
+  "CEDAR",
+  "CHAMPION",
+  "CINNAMON",
+  "CITADEL",
+  "CLOVER",
+  "COMET",
+  "CORAL",
+  "CRYSTAL",
+  "CUPCAKE",
+  "DAHLIA",
+  "DESERT",
+  "DIAMOND",
+  "DRAGONFLY",
+  "DRIZZLE",
+  "ECHO",
+  "EMBER",
+  "EMERALD",
+  "FALCON",
+  "FEATHER",
+  "FESTIVAL",
+  "FIRELIGHT",
+  "FJORD",
+  "FOREST",
+  "FOSSIL",
+  "GALAXY",
+  "GARDEN",
+  "GAZELLE",
+  "GLACIER",
+  "HARBOR",
+  "HARMONY",
+  "HAZELNUT",
+  "HORIZON",
+  "ICICLE",
+  "ISLAND",
+  "IVY",
+  "JASMINE",
+  "JELLYBEAN",
+  "JUNIPER",
+  "KINGDOM",
+  "LANTERN",
+  "LAVENDER",
+  "LEMONADE",
+  "LIGHTHOUSE",
+  "LOTUS",
+  "MARBLE",
+  "MEADOW",
+  "METEOR",
+  "MIDNIGHT",
+  "MISTY",
+  "MOONBEAM",
+  "NEBULA",
+  "NECTARINE",
+  "OASIS",
+  "OBSIDIAN",
+  "ORCHARD",
+  "OTTER",
+  "PARADISE",
+  "PEBBLE",
+  "PEPPERMINT",
+  "PHOENIX",
+  "PINEAPPLE",
+  "PRAIRIE",
+  "QUARTZ",
+  "RAINBOW",
+  "RAVEN",
+  "RIVER",
+  "SAFFRON",
+  "SEASHELL",
+  "SHADOW",
+  "SOLSTICE",
+  "SPARROW",
+  "STARLIGHT",
+  "SUNFLOWER",
+  "THUNDER",
+  "TREASURE",
+  "TULIP",
+  "VELVET",
+  "WATERFALL",
+  "WHISPER",
+  "WILDFLOWER",
+  "ZEPPELIN"
+];
 const MAX_WORDS = 30;
+const STARTER_WORD_COUNT = 10;
+const WORD_POOLS = {
+  Random: DEFAULT_WORDS,
+  Aviation: [
+    "AILERON", "AIRSPEED", "AIRWAY", "ALTIMETER", "APPROACH", "APRON", "ATTITUDE", "AVGAS", "AVIATOR",
+    "BALLOON", "BANKING", "BEACON", "BLACKBOX", "BRIEFING", "CABINS", "CARGO", "CHECKLIST", "CLIMB",
+    "COCKPIT", "COMPASS", "CONTRAIL", "CROSSWIND", "CRUISING", "DESCENT", "DIRECTIONS", "DRAG", "DRONE",
+    "ELEVATOR", "EMPENNAGE", "ENGINE", "FERRY", "FINAL", "FLAPS", "FLARE", "FUSELAGE", "GLIDER",
+    "GROUNDSPEED", "HANGAR", "HEADING", "HELIPAD", "HOLDING", "HORIZON", "JETWAY", "JOYSTICK", "LANDING",
+    "LIFTOFF", "LOGBOOK", "MANEUVER", "MAYDAY", "NAVLIGHT", "NOSEDIVE", "OAT", "PARACHUTE", "PAYLOAD",
+    "PITCH", "PROPELLER", "RADAR", "RUNWAY", "RUDDER", "SEAPLANE", "SIDESTICK", "SKIDS", "SLATS",
+    "SLIPSTREAM", "SOARING", "SPOILER", "STALL", "STARBOARD", "STEWARD", "TAILWIND", "TAKEOFF", "TAXIWAY",
+    "TERMINAL", "THROTTLE", "TOUCHDOWN", "TOWER", "TRAFFIC", "TRIM", "TURBINE", "TURNAROUND", "UPDRAFT",
+    "VECTOR", "VFR", "VORTEX", "WEATHER", "WINGLET", "YAW", "YOKE", "AIRLINER", "AUTOPILOT", "BIRDSTRIKE",
+    "DEICING", "GOAROUND", "HEADWIND", "JETSTREAM", "LAYOVER", "OVERSHOOT", "TAILPLANE", "WAYPOINT"
+  ],
+  Finance: [
+    "ACCOUNT", "ACCRUAL", "AMORTIZE", "ANALYST", "ANNUITY", "ASSETS", "BALANCE", "BANKING", "BOND",
+    "BROKER", "BUDGET", "BULLMARKET", "CAPITAL", "CASHFLOW", "CLEARING", "COLLATERAL", "COMMODITY",
+    "COMPOUND", "COUPON", "CREDIT", "CURRENCY", "CUSTODIAN", "DEBIT", "DEFAULT", "DEPOSIT", "DERIVATIVE",
+    "DIVIDEND", "EARNINGS", "EQUITY", "ESCROW", "EXPENSE", "FEDFUNDS", "FINANCE", "FORECAST", "FUTURES",
+    "GAINS", "HEDGING", "HOLDINGS", "INCOME", "INDEX", "INFLATION", "INTEREST", "INVOICE", "ISSUER",
+    "JOURNAL", "LEDGER", "LEVERAGE", "LIABILITY", "LIQUIDITY", "LOAN", "MARGIN", "MARKETCAP", "MATURITY",
+    "MERGER", "MUTUALFUND", "NASDAQ", "NETWORTH", "NOTIONAL", "OPTION", "PAYABLE", "PAYEE", "PAYROLL",
+    "PENSION", "PORTFOLIO", "PREMIUM", "PRINCIPAL", "PROFIT", "QUOTE", "RATING", "RECEIPT", "RECONCILE",
+    "REFINANCE", "RESERVE", "REVENUE", "RISK", "ROYALTY", "SAVINGS", "SECURITY", "SETTLEMENT", "SHARES",
+    "SHORTSALE", "SOLVENCY", "SPREAD", "STATEMENT", "STOCKS", "SWAP", "TARIFF", "TAXES", "TICKER", "TRADE",
+    "TREASURY", "TURNOVER", "UNDERWRITE", "VALUATION", "VENTURE", "VOLATILITY", "WALLET", "WEALTH", "YIELD"
+  ],
+  Bookkeeping: [
+    "ACCOUNT", "ACCRUAL", "AGING", "ALLOCATION", "AMORTIZE", "APLEDGER", "ARLEDGER", "ASSETS", "AUDIT",
+    "BALANCE", "BANKFEED", "BANKREC", "BILLABLE", "BOOKKEEPER", "CAPITAL", "CASHBOOK", "CASHFLOW",
+    "CHARTOFACCT", "CHECKNUM", "CLEARED", "CLOSING", "CODING", "COSTING", "CREDIT", "CREDITMEMO", "DAYBOOK",
+    "DEBIT", "DEPRECIATE", "DISBURSE", "DRAWINGS", "EQUITY", "EXPENSE", "FISCALYEAR", "FIXEDASSET",
+    "GENERALLEDG", "GROSSPAY", "INCOME", "INVOICE", "ITEMIZE", "JOURNAL", "LIABILITY", "LINEITEM",
+    "MANUALENTRY", "MARKUP", "NETPAY", "OPENINGBAL", "OVERHEAD", "OWNERDRAW", "PAYABLE", "PAYEE", "PAYROLL",
+    "PETTYCASH", "POSTING", "PREPAID", "PROFITLOSS", "PURCHASE", "QUICKBOOKS", "RECEIPT", "RECONCILE",
+    "REMITTANCE", "RETAINED", "REVENUE", "SALES", "SALESTAX", "STATEMENT", "SUBLEDGER", "SUNDRY", "SUPPLIER",
+    "TAXABLE", "TIMESHEET", "TRACKING", "TRANSACTION", "TRIALBAL", "UNAPPLIED", "VARIANCE", "VENDOR",
+    "VOIDED", "WITHHOLDING", "WORKSHEET", "WRITEOFF", "YEAREND", "ADJUSTMENT", "ALLOWANCE", "BACKUP",
+    "CASHBASIS", "CREDITNOTE", "DEBITNOTE", "DISCOUNT", "EFTPAYMENT", "ESTIMATE", "FILECOPY", "GROSSPROFIT",
+    "INVENTORY", "OVERPAYMENT", "PURCHASEORD", "REFERENCE", "REVERSAL", "SERVICEITEM", "SUBTOTAL", "TRANSFER"
+  ],
+  "Mormon Words": [
+    "AARONIC", "AGENCY", "ALTAR", "ATONEMENT", "BAPTISM", "BEEHIVE", "BISHOP", "BLESSINGS", "BOOKOFMORMON",
+    "CALLING", "CELESTIAL", "CHARITY", "CONVERT", "COVENANT", "DEACON", "DESERET", "ENDOWMENT", "ENDURE",
+    "ETERNAL", "EXALTATION", "FAITH", "FASTING", "FELLOWSHIP", "FOREORDINATION", "GENEALOGY", "GENTILES",
+    "GOSPEL", "GRACE", "HEAVENLY", "HIGHPRIEST", "HOMEEVENING", "HOSANNA", "INSTITUTE", "IRONROD", "JEREDITES",
+    "JOSEPHSMITH", "KINGBENJAMIN", "LAMANITES", "LEHI", "LIBERTYJAIL", "MAELCHIZEDEK", "MISSIONARY", "MODESTY",
+    "MORONI", "NEPHI", "ORDINANCE", "PATRIARCH", "PIONEER", "PLANOFSALV", "PRAYER", "PRIESTHOOD", "PRIMARY",
+    "PROPHET", "REDEEMER", "RELIEFSOC", "REPENTANCE", "RESTORATION", "RESURRECTION", "SABBATH", "SACRAMENT",
+    "SALVATION", "SANCTIFY", "SEMINARY", "SERVICE", "SEVENTY", "STAKE", "STEWARDSHIP", "STRIPLING", "TABERNACLE",
+    "TEMPLE", "TENDERMERCIES", "TESTIMONY", "TITHING", "WARD", "ZION", "YOUNGWOMEN", "YOUNGMEN",
+    "BEOFGOODCHEER", "CHOOSETHERIGHT", "COMEFOLLOWME", "ENDURETOEND", "FAMILIESFOREVER", "FAITHINCHRIST",
+    "FOLLOWPROPHET", "GATHERISRAEL", "HOLYGHOST", "HOLDTOROD", "HOUSEOFLORD", "IAMACHILD", "INTHEWORLD",
+    "JOYINCHRIST", "KEEPCOMMANDMENTS", "MINISTERONE", "STILLSMALLVOICE", "TENDERMERCIES", "THINKCELESTIAL",
+    "TRUSTINGOD", "WALKINLIGHT"
+  ],
+  "Mormon and Bible Books": [
+    "1NEPHI", "2NEPHI", "JACOB", "ENOS", "JAROM", "OMNI", "MOSIAH", "ALMA", "HELAMAN", "3NEPHI", "4NEPHI",
+    "MORMON", "ETHER", "MORONI", "GENESIS", "EXODUS", "LEVITICUS", "NUMBERS", "DEUTERONOMY", "JOSHUA", "JUDGES",
+    "RUTH", "1SAMUEL", "2SAMUEL", "1KINGS", "2KINGS", "1CHRONICLES", "2CHRONICLES", "EZRA", "NEHEMIAH", "ESTHER",
+    "JOB", "PSALMS", "PROVERBS", "ECCLESIASTES", "SONGOFSONGS", "ISAIAH", "JEREMIAH", "LAMENTATIONS", "EZEKIEL",
+    "DANIEL", "HOSEA", "JOEL", "AMOS", "OBADIAH", "JONAH", "MICAH", "NAHUM", "HABAKKUK", "ZEPHANIAH", "HAGGAI",
+    "ZECHARIAH", "MALACHI", "MATTHEW", "MARK", "LUKE", "JOHN", "ACTS", "ROMANS", "1CORINTHIANS", "2CORINTHIANS",
+    "GALATIANS", "EPHESIANS", "PHILIPPIANS", "COLOSSIANS", "1THESSALONIANS", "2THESSALONIANS", "1TIMOTHY",
+    "2TIMOTHY", "TITUS", "PHILEMON", "HEBREWS", "JAMES", "1PETER", "2PETER", "1JOHN", "2JOHN", "3JOHN", "JUDE",
+    "REVELATION", "MOSES", "ABRAHAM", "FACSIMILES", "JSTMATTHEW", "JSTGENESIS", "ARTICLESOFFAITH", "DC1", "DC2",
+    "DC3", "DC4", "DC5", "DC6", "DC7", "DC8", "DC9", "DC10", "DC20", "DC76", "DC89", "DC121", "DC122", "DC123"
+  ]
+};
+const FOUND_WORD_COLORS = [
+  "#e4572e",
+  "#3a86ff",
+  "#2a9d8f",
+  "#ff006e",
+  "#8338ec",
+  "#ffbe0b",
+  "#118ab2",
+  "#ef476f",
+  "#06d6a0",
+  "#fb5607",
+  "#4361ee",
+  "#7cb518"
+];
 const boardElement = document.getElementById("board");
+const boardOverlayElement = document.getElementById("boardOverlay");
 const wordListElement = document.getElementById("wordList");
 const statusTextElement = document.getElementById("statusText");
 const celebrationCardElement = document.getElementById("celebrationCard");
@@ -11,6 +202,8 @@ const setupScreenElement = document.getElementById("setupScreen");
 const gameScreenElement = document.getElementById("gameScreen");
 const setupFormElement = document.getElementById("setupForm");
 const wordsInputElement = document.getElementById("wordsInput");
+const wordListSelectElement = document.getElementById("wordListSelect");
+const wordCountSelectElement = document.getElementById("wordCountSelect");
 const boardSizeSelectElement = document.getElementById("boardSizeSelect");
 const minimumSizeTextElement = document.getElementById("minimumSizeText");
 const wordCountTextElement = document.getElementById("wordCountText");
@@ -20,6 +213,7 @@ const setupErrorElement = document.getElementById("setupError");
 let gameState = null;
 let timerIntervalId = null;
 let currentConfig = null;
+let isApplyingStarterWords = false;
 
 function buildPuzzleState(config) {
   const words = config.words.map((word) => word.toUpperCase());
@@ -28,7 +222,7 @@ function buildPuzzleState(config) {
     size: config.size,
     grid: generateGrid(words, config.size),
     foundWords: new Set(),
-    foundCells: new Set(),
+    foundWordPaths: [],
     activeCells: [],
     pointerDown: false,
     activeDirection: null
@@ -152,8 +346,52 @@ function shuffle(items) {
   return items;
 }
 
+function getStarterWords() {
+  const requestedCount = Number(wordCountSelectElement?.value || STARTER_WORD_COUNT);
+  const selectedListName = wordListSelectElement?.value || "Random";
+  const sourceWords = WORD_POOLS[selectedListName] || DEFAULT_WORDS;
+  return shuffle([...sourceWords]).slice(0, requestedCount);
+}
+
+function populateWordListOptions() {
+  wordListSelectElement.innerHTML = "";
+
+  Object.keys(WORD_POOLS).forEach((listName) => {
+    const option = document.createElement("option");
+    option.value = listName;
+    option.textContent = listName;
+    if (listName === "Random") {
+      option.selected = true;
+    }
+    wordListSelectElement.appendChild(option);
+  });
+}
+
+function populateWordCountOptions() {
+  wordCountSelectElement.innerHTML = "";
+
+  for (let count = 10; count <= 30; count += 1) {
+    const option = document.createElement("option");
+    option.value = String(count);
+    option.textContent = String(count);
+    if (count === STARTER_WORD_COUNT) {
+      option.selected = true;
+    }
+    wordCountSelectElement.appendChild(option);
+  }
+}
+
+function applyStarterWords() {
+  isApplyingStarterWords = true;
+  wordsInputElement.value = getStarterWords().join("\n");
+  isApplyingStarterWords = false;
+  clearSetupError();
+  updateSetupPreview();
+}
+
 function render() {
   renderBoard();
+  renderFoundWordOverlay();
   renderWordList();
   updateStatus();
 }
@@ -175,9 +413,7 @@ function renderBoard() {
       button.setAttribute("role", "gridcell");
       button.setAttribute("aria-label", `Row ${row + 1} Column ${column + 1}: ${button.textContent}`);
 
-      if (gameState.foundCells.has(key)) {
-        button.classList.add("found");
-      } else if (gameState.activeCells.some((cell) => cell.row === row && cell.column === column)) {
+      if (gameState.activeCells.some((cell) => cell.row === row && cell.column === column)) {
         button.classList.add("selected");
       }
 
@@ -185,6 +421,75 @@ function renderBoard() {
       boardElement.appendChild(button);
     }
   }
+}
+
+function renderFoundWordOverlay() {
+  boardOverlayElement.innerHTML = "";
+
+  const boardRect = boardElement.getBoundingClientRect();
+  if (!boardRect.width || !boardRect.height) {
+    return;
+  }
+
+  boardOverlayElement.setAttribute("viewBox", `0 0 ${boardRect.width} ${boardRect.height}`);
+
+  gameState.foundWordPaths.forEach((entry) => {
+    const firstCell = getCellElement(entry.cells[0]);
+    const lastCell = getCellElement(entry.cells[entry.cells.length - 1]);
+
+    if (!firstCell || !lastCell) {
+      return;
+    }
+
+    const firstRect = firstCell.getBoundingClientRect();
+    const lastRect = lastCell.getBoundingClientRect();
+    const startX = firstRect.left - boardRect.left + firstRect.width / 2;
+    const startY = firstRect.top - boardRect.top + firstRect.height / 2;
+    const endX = lastRect.left - boardRect.left + lastRect.width / 2;
+    const endY = lastRect.top - boardRect.top + lastRect.height / 2;
+    const cellSize = Math.min(firstRect.width, firstRect.height);
+    const radius = Math.max(8, cellSize * 0.42);
+    const outlineWidth = Math.max(2.5, cellSize * 0.1);
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+    const length = Math.hypot(deltaX, deltaY) || 1;
+    const midpointX = (startX + endX) / 2;
+    const midpointY = (startY + endY) / 2;
+    const totalLength = length + radius * 1.8;
+    const angle = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
+
+    const halo = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    halo.setAttribute("x", String(midpointX - totalLength / 2));
+    halo.setAttribute("y", String(midpointY - radius));
+    halo.setAttribute("width", String(totalLength));
+    halo.setAttribute("height", String(radius * 2));
+    halo.setAttribute("rx", String(radius));
+    halo.setAttribute("ry", String(radius));
+    halo.setAttribute("fill", "none");
+    halo.setAttribute("stroke", "rgba(255, 255, 255, 0.9)");
+    halo.setAttribute("stroke-width", String(outlineWidth + 2));
+    halo.setAttribute("transform", `rotate(${angle} ${midpointX} ${midpointY})`);
+
+    const stroke = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    stroke.setAttribute("x", String(midpointX - totalLength / 2));
+    stroke.setAttribute("y", String(midpointY - radius));
+    stroke.setAttribute("width", String(totalLength));
+    stroke.setAttribute("height", String(radius * 2));
+    stroke.setAttribute("rx", String(radius));
+    stroke.setAttribute("ry", String(radius));
+    stroke.setAttribute("fill", "none");
+    stroke.setAttribute("stroke", entry.color);
+    stroke.setAttribute("stroke-width", String(outlineWidth));
+    stroke.setAttribute("opacity", "0.95");
+    stroke.setAttribute("transform", `rotate(${angle} ${midpointX} ${midpointY})`);
+
+    boardOverlayElement.appendChild(halo);
+    boardOverlayElement.appendChild(stroke);
+  });
+}
+
+function getCellElement(cell) {
+  return boardElement.querySelector(`[data-row="${cell.row}"][data-column="${cell.column}"]`);
 }
 
 function renderWordList() {
@@ -263,7 +568,11 @@ function handlePointerUp() {
 
   if (matchedWord) {
     gameState.foundWords.add(matchedWord);
-    gameState.activeCells.forEach(({ row, column }) => gameState.foundCells.add(getCellKey(row, column)));
+    gameState.foundWordPaths.push({
+      word: matchedWord,
+      color: FOUND_WORD_COLORS[gameState.foundWordPaths.length % FOUND_WORD_COLORS.length],
+      cells: gameState.activeCells.map(({ row, column }) => ({ row, column }))
+    });
   }
 
   gameState.pointerDown = false;
@@ -480,10 +789,33 @@ restartButton.addEventListener("click", restartCurrentGame);
 editSetupButton.addEventListener("click", returnToSetup);
 setupFormElement.addEventListener("submit", handleSetupSubmit);
 wordsInputElement.addEventListener("input", () => {
+  if (isApplyingStarterWords) {
+    return;
+  }
+
   clearSetupError();
   updateSetupPreview();
 });
 
-wordsInputElement.value = DEFAULT_WORDS.join("\n");
-updateSetupPreview();
-renderScreen("setup");
+wordCountSelectElement.addEventListener("change", () => {
+  applyStarterWords();
+});
+
+wordListSelectElement.addEventListener("change", () => {
+  applyStarterWords();
+});
+
+function initializeApp() {
+  populateWordListOptions();
+  populateWordCountOptions();
+  applyStarterWords();
+  renderScreen("setup");
+}
+
+initializeApp();
+
+window.addEventListener("resize", () => {
+  if (gameState) {
+    renderFoundWordOverlay();
+  }
+});
