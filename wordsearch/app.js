@@ -1,5 +1,111 @@
-const DEFAULT_WORDS = ["CHROME", "PUZZLE", "SEARCH", "GRID", "DRAG", "MOUSE", "TOUCH", "FRAME"];
+const DEFAULT_WORDS = [
+  "ACORN",
+  "AMBER",
+  "ANCHOR",
+  "APPLE",
+  "ARCADE",
+  "ASTEROID",
+  "ATLAS",
+  "AURORA",
+  "AVALANCHE",
+  "BAMBOO",
+  "BANANA",
+  "BEACON",
+  "BLIZZARD",
+  "BONFIRE",
+  "BRIDGE",
+  "BUTTERCUP",
+  "CACTUS",
+  "CAMERA",
+  "CANDLE",
+  "CARAMEL",
+  "CASCADE",
+  "CASTLE",
+  "CAVERN",
+  "CEDAR",
+  "CHAMPION",
+  "CINNAMON",
+  "CITADEL",
+  "CLOVER",
+  "COMET",
+  "CORAL",
+  "CRYSTAL",
+  "CUPCAKE",
+  "DAHLIA",
+  "DESERT",
+  "DIAMOND",
+  "DRAGONFLY",
+  "DRIZZLE",
+  "ECHO",
+  "EMBER",
+  "EMERALD",
+  "FALCON",
+  "FEATHER",
+  "FESTIVAL",
+  "FIRELIGHT",
+  "FJORD",
+  "FOREST",
+  "FOSSIL",
+  "GALAXY",
+  "GARDEN",
+  "GAZELLE",
+  "GLACIER",
+  "HARBOR",
+  "HARMONY",
+  "HAZELNUT",
+  "HORIZON",
+  "ICICLE",
+  "ISLAND",
+  "IVY",
+  "JASMINE",
+  "JELLYBEAN",
+  "JUNIPER",
+  "KINGDOM",
+  "LANTERN",
+  "LAVENDER",
+  "LEMONADE",
+  "LIGHTHOUSE",
+  "LOTUS",
+  "MARBLE",
+  "MEADOW",
+  "METEOR",
+  "MIDNIGHT",
+  "MISTY",
+  "MOONBEAM",
+  "NEBULA",
+  "NECTARINE",
+  "OASIS",
+  "OBSIDIAN",
+  "ORCHARD",
+  "OTTER",
+  "PARADISE",
+  "PEBBLE",
+  "PEPPERMINT",
+  "PHOENIX",
+  "PINEAPPLE",
+  "PRAIRIE",
+  "QUARTZ",
+  "RAINBOW",
+  "RAVEN",
+  "RIVER",
+  "SAFFRON",
+  "SEASHELL",
+  "SHADOW",
+  "SOLSTICE",
+  "SPARROW",
+  "STARLIGHT",
+  "SUNFLOWER",
+  "THUNDER",
+  "TREASURE",
+  "TULIP",
+  "VELVET",
+  "WATERFALL",
+  "WHISPER",
+  "WILDFLOWER",
+  "ZEPPELIN"
+];
 const MAX_WORDS = 30;
+const STARTER_WORD_COUNT = 10;
 const FOUND_WORD_COLORS = [
   "#e4572e",
   "#3a86ff",
@@ -26,6 +132,7 @@ const setupScreenElement = document.getElementById("setupScreen");
 const gameScreenElement = document.getElementById("gameScreen");
 const setupFormElement = document.getElementById("setupForm");
 const wordsInputElement = document.getElementById("wordsInput");
+const wordCountSelectElement = document.getElementById("wordCountSelect");
 const boardSizeSelectElement = document.getElementById("boardSizeSelect");
 const minimumSizeTextElement = document.getElementById("minimumSizeText");
 const wordCountTextElement = document.getElementById("wordCountText");
@@ -35,6 +142,7 @@ const setupErrorElement = document.getElementById("setupError");
 let gameState = null;
 let timerIntervalId = null;
 let currentConfig = null;
+let isApplyingStarterWords = false;
 
 function buildPuzzleState(config) {
   const words = config.words.map((word) => word.toUpperCase());
@@ -165,6 +273,33 @@ function shuffle(items) {
   }
 
   return items;
+}
+
+function getStarterWords() {
+  const requestedCount = Number(wordCountSelectElement?.value || STARTER_WORD_COUNT);
+  return shuffle([...DEFAULT_WORDS]).slice(0, requestedCount);
+}
+
+function populateWordCountOptions() {
+  wordCountSelectElement.innerHTML = "";
+
+  for (let count = 10; count <= 30; count += 1) {
+    const option = document.createElement("option");
+    option.value = String(count);
+    option.textContent = String(count);
+    if (count === STARTER_WORD_COUNT) {
+      option.selected = true;
+    }
+    wordCountSelectElement.appendChild(option);
+  }
+}
+
+function applyStarterWords() {
+  isApplyingStarterWords = true;
+  wordsInputElement.value = getStarterWords().join("\n");
+  isApplyingStarterWords = false;
+  clearSetupError();
+  updateSetupPreview();
 }
 
 function render() {
@@ -567,13 +702,25 @@ restartButton.addEventListener("click", restartCurrentGame);
 editSetupButton.addEventListener("click", returnToSetup);
 setupFormElement.addEventListener("submit", handleSetupSubmit);
 wordsInputElement.addEventListener("input", () => {
+  if (isApplyingStarterWords) {
+    return;
+  }
+
   clearSetupError();
   updateSetupPreview();
 });
 
-wordsInputElement.value = DEFAULT_WORDS.join("\n");
-updateSetupPreview();
-renderScreen("setup");
+wordCountSelectElement.addEventListener("change", () => {
+  applyStarterWords();
+});
+
+function initializeApp() {
+  populateWordCountOptions();
+  applyStarterWords();
+  renderScreen("setup");
+}
+
+initializeApp();
 
 window.addEventListener("resize", () => {
   if (gameState) {
