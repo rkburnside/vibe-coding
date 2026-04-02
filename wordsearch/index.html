@@ -25,6 +25,21 @@
 
       <main>
         <section id="setupScreen" class="setup-screen">
+          <section class="setup-controls card">
+            <label class="field compact" for="wordListSelect">
+              <span>Word list</span>
+              <select id="wordListSelect"></select>
+            </label>
+            <label class="field compact" for="wordCountSelect">
+              <span>Word count</span>
+              <select id="wordCountSelect"></select>
+            </label>
+            <label class="field compact" for="boardSizeSelect">
+              <span>Choose a size</span>
+              <select id="boardSizeSelect"></select>
+            </label>
+          </section>
+
           <section class="setup-panel">
             <div>
               <p class="label">Setup</p>
@@ -40,25 +55,10 @@
                 <textarea id="wordsInput" rows="10" spellcheck="false"></textarea>
               </label>
 
-              <div class="setup-grid">
-                <div class="card info-card">
-                  <p class="label">Board size</p>
-                  <p id="minimumSizeText" class="info-text">Minimum size: 0 x 0</p>
-                  <label class="field compact" for="boardSizeSelect">
-                    <span>Choose a size</span>
-                    <select id="boardSizeSelect"></select>
-                  </label>
-                </div>
-
-                <div class="card info-card">
-                  <p class="label">Preview</p>
-                  <label class="field compact" for="wordCountSelect">
-                    <span>Word count</span>
-                    <select id="wordCountSelect"></select>
-                  </label>
-                  <p id="wordCountText" class="info-text">0 words ready</p>
-                  <p id="sizeHintText" class="info-subtext">Add a few words to unlock size options.</p>
-                </div>
+              <div class="setup-summary card">
+                <p id="minimumSizeText" class="info-text">Minimum size: 0 x 0</p>
+                <p id="wordCountText" class="info-text">0 words ready</p>
+                <p id="sizeHintText" class="info-subtext">Add a few words to unlock size options.</p>
               </div>
 
               <p id="setupError" class="setup-error hidden" aria-live="polite"></p>

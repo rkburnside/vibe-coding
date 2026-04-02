@@ -106,6 +106,76 @@ const DEFAULT_WORDS = [
 ];
 const MAX_WORDS = 30;
 const STARTER_WORD_COUNT = 10;
+const WORD_POOLS = {
+  Random: DEFAULT_WORDS,
+  Aviation: [
+    "AILERON", "AIRSPEED", "AIRWAY", "ALTIMETER", "APPROACH", "APRON", "ATTITUDE", "AVGAS", "AVIATOR",
+    "BALLOON", "BANKING", "BEACON", "BLACKBOX", "BRIEFING", "CABINS", "CARGO", "CHECKLIST", "CLIMB",
+    "COCKPIT", "COMPASS", "CONTRAIL", "CROSSWIND", "CRUISING", "DESCENT", "DIRECTIONS", "DRAG", "DRONE",
+    "ELEVATOR", "EMPENNAGE", "ENGINE", "FERRY", "FINAL", "FLAPS", "FLARE", "FUSELAGE", "GLIDER",
+    "GROUNDSPEED", "HANGAR", "HEADING", "HELIPAD", "HOLDING", "HORIZON", "JETWAY", "JOYSTICK", "LANDING",
+    "LIFTOFF", "LOGBOOK", "MANEUVER", "MAYDAY", "NAVLIGHT", "NOSEDIVE", "OAT", "PARACHUTE", "PAYLOAD",
+    "PITCH", "PROPELLER", "RADAR", "RUNWAY", "RUDDER", "SEAPLANE", "SIDESTICK", "SKIDS", "SLATS",
+    "SLIPSTREAM", "SOARING", "SPOILER", "STALL", "STARBOARD", "STEWARD", "TAILWIND", "TAKEOFF", "TAXIWAY",
+    "TERMINAL", "THROTTLE", "TOUCHDOWN", "TOWER", "TRAFFIC", "TRIM", "TURBINE", "TURNAROUND", "UPDRAFT",
+    "VECTOR", "VFR", "VORTEX", "WEATHER", "WINGLET", "YAW", "YOKE", "AIRLINER", "AUTOPILOT", "BIRDSTRIKE",
+    "DEICING", "GOAROUND", "HEADWIND", "JETSTREAM", "LAYOVER", "OVERSHOOT", "TAILPLANE", "WAYPOINT"
+  ],
+  Finance: [
+    "ACCOUNT", "ACCRUAL", "AMORTIZE", "ANALYST", "ANNUITY", "ASSETS", "BALANCE", "BANKING", "BOND",
+    "BROKER", "BUDGET", "BULLMARKET", "CAPITAL", "CASHFLOW", "CLEARING", "COLLATERAL", "COMMODITY",
+    "COMPOUND", "COUPON", "CREDIT", "CURRENCY", "CUSTODIAN", "DEBIT", "DEFAULT", "DEPOSIT", "DERIVATIVE",
+    "DIVIDEND", "EARNINGS", "EQUITY", "ESCROW", "EXPENSE", "FEDFUNDS", "FINANCE", "FORECAST", "FUTURES",
+    "GAINS", "HEDGING", "HOLDINGS", "INCOME", "INDEX", "INFLATION", "INTEREST", "INVOICE", "ISSUER",
+    "JOURNAL", "LEDGER", "LEVERAGE", "LIABILITY", "LIQUIDITY", "LOAN", "MARGIN", "MARKETCAP", "MATURITY",
+    "MERGER", "MUTUALFUND", "NASDAQ", "NETWORTH", "NOTIONAL", "OPTION", "PAYABLE", "PAYEE", "PAYROLL",
+    "PENSION", "PORTFOLIO", "PREMIUM", "PRINCIPAL", "PROFIT", "QUOTE", "RATING", "RECEIPT", "RECONCILE",
+    "REFINANCE", "RESERVE", "REVENUE", "RISK", "ROYALTY", "SAVINGS", "SECURITY", "SETTLEMENT", "SHARES",
+    "SHORTSALE", "SOLVENCY", "SPREAD", "STATEMENT", "STOCKS", "SWAP", "TARIFF", "TAXES", "TICKER", "TRADE",
+    "TREASURY", "TURNOVER", "UNDERWRITE", "VALUATION", "VENTURE", "VOLATILITY", "WALLET", "WEALTH", "YIELD"
+  ],
+  Bookkeeping: [
+    "ACCOUNT", "ACCRUAL", "AGING", "ALLOCATION", "AMORTIZE", "APLEDGER", "ARLEDGER", "ASSETS", "AUDIT",
+    "BALANCE", "BANKFEED", "BANKREC", "BILLABLE", "BOOKKEEPER", "CAPITAL", "CASHBOOK", "CASHFLOW",
+    "CHARTOFACCT", "CHECKNUM", "CLEARED", "CLOSING", "CODING", "COSTING", "CREDIT", "CREDITMEMO", "DAYBOOK",
+    "DEBIT", "DEPRECIATE", "DISBURSE", "DRAWINGS", "EQUITY", "EXPENSE", "FISCALYEAR", "FIXEDASSET",
+    "GENERALLEDG", "GROSSPAY", "INCOME", "INVOICE", "ITEMIZE", "JOURNAL", "LIABILITY", "LINEITEM",
+    "MANUALENTRY", "MARKUP", "NETPAY", "OPENINGBAL", "OVERHEAD", "OWNERDRAW", "PAYABLE", "PAYEE", "PAYROLL",
+    "PETTYCASH", "POSTING", "PREPAID", "PROFITLOSS", "PURCHASE", "QUICKBOOKS", "RECEIPT", "RECONCILE",
+    "REMITTANCE", "RETAINED", "REVENUE", "SALES", "SALESTAX", "STATEMENT", "SUBLEDGER", "SUNDRY", "SUPPLIER",
+    "TAXABLE", "TIMESHEET", "TRACKING", "TRANSACTION", "TRIALBAL", "UNAPPLIED", "VARIANCE", "VENDOR",
+    "VOIDED", "WITHHOLDING", "WORKSHEET", "WRITEOFF", "YEAREND", "ADJUSTMENT", "ALLOWANCE", "BACKUP",
+    "CASHBASIS", "CREDITNOTE", "DEBITNOTE", "DISCOUNT", "EFTPAYMENT", "ESTIMATE", "FILECOPY", "GROSSPROFIT",
+    "INVENTORY", "OVERPAYMENT", "PURCHASEORD", "REFERENCE", "REVERSAL", "SERVICEITEM", "SUBTOTAL", "TRANSFER"
+  ],
+  "Mormon Words": [
+    "AARONIC", "AGENCY", "ALTAR", "ATONEMENT", "BAPTISM", "BEEHIVE", "BISHOP", "BLESSINGS", "BOOKOFMORMON",
+    "CALLING", "CELESTIAL", "CHARITY", "CONVERT", "COVENANT", "DEACON", "DESERET", "ENDOWMENT", "ENDURE",
+    "ETERNAL", "EXALTATION", "FAITH", "FASTING", "FELLOWSHIP", "FOREORDINATION", "GENEALOGY", "GENTILES",
+    "GOSPEL", "GRACE", "HEAVENLY", "HIGHPRIEST", "HOMEEVENING", "HOSANNA", "INSTITUTE", "IRONROD", "JEREDITES",
+    "JOSEPHSMITH", "KINGBENJAMIN", "LAMANITES", "LEHI", "LIBERTYJAIL", "MAELCHIZEDEK", "MISSIONARY", "MODESTY",
+    "MORONI", "NEPHI", "ORDINANCE", "PATRIARCH", "PIONEER", "PLANOFSALV", "PRAYER", "PRIESTHOOD", "PRIMARY",
+    "PROPHET", "REDEEMER", "RELIEFSOC", "REPENTANCE", "RESTORATION", "RESURRECTION", "SABBATH", "SACRAMENT",
+    "SALVATION", "SANCTIFY", "SEMINARY", "SERVICE", "SEVENTY", "STAKE", "STEWARDSHIP", "STRIPLING", "TABERNACLE",
+    "TEMPLE", "TENDERMERCIES", "TESTIMONY", "TITHING", "WARD", "ZION", "YOUNGWOMEN", "YOUNGMEN",
+    "BEOFGOODCHEER", "CHOOSETHERIGHT", "COMEFOLLOWME", "ENDURETOEND", "FAMILIESFOREVER", "FAITHINCHRIST",
+    "FOLLOWPROPHET", "GATHERISRAEL", "HOLYGHOST", "HOLDTOROD", "HOUSEOFLORD", "IAMACHILD", "INTHEWORLD",
+    "JOYINCHRIST", "KEEPCOMMANDMENTS", "MINISTERONE", "STILLSMALLVOICE", "TENDERMERCIES", "THINKCELESTIAL",
+    "TRUSTINGOD", "WALKINLIGHT"
+  ],
+  "Mormon and Bible Books": [
+    "1NEPHI", "2NEPHI", "JACOB", "ENOS", "JAROM", "OMNI", "MOSIAH", "ALMA", "HELAMAN", "3NEPHI", "4NEPHI",
+    "MORMON", "ETHER", "MORONI", "GENESIS", "EXODUS", "LEVITICUS", "NUMBERS", "DEUTERONOMY", "JOSHUA", "JUDGES",
+    "RUTH", "1SAMUEL", "2SAMUEL", "1KINGS", "2KINGS", "1CHRONICLES", "2CHRONICLES", "EZRA", "NEHEMIAH", "ESTHER",
+    "JOB", "PSALMS", "PROVERBS", "ECCLESIASTES", "SONGOFSONGS", "ISAIAH", "JEREMIAH", "LAMENTATIONS", "EZEKIEL",
+    "DANIEL", "HOSEA", "JOEL", "AMOS", "OBADIAH", "JONAH", "MICAH", "NAHUM", "HABAKKUK", "ZEPHANIAH", "HAGGAI",
+    "ZECHARIAH", "MALACHI", "MATTHEW", "MARK", "LUKE", "JOHN", "ACTS", "ROMANS", "1CORINTHIANS", "2CORINTHIANS",
+    "GALATIANS", "EPHESIANS", "PHILIPPIANS", "COLOSSIANS", "1THESSALONIANS", "2THESSALONIANS", "1TIMOTHY",
+    "2TIMOTHY", "TITUS", "PHILEMON", "HEBREWS", "JAMES", "1PETER", "2PETER", "1JOHN", "2JOHN", "3JOHN", "JUDE",
+    "REVELATION", "MOSES", "ABRAHAM", "FACSIMILES", "JSTMATTHEW", "JSTGENESIS", "ARTICLESOFFAITH", "DC1", "DC2",
+    "DC3", "DC4", "DC5", "DC6", "DC7", "DC8", "DC9", "DC10", "DC20", "DC76", "DC89", "DC121", "DC122", "DC123"
+  ]
+};
 const FOUND_WORD_COLORS = [
   "#e4572e",
   "#3a86ff",
@@ -132,6 +202,7 @@ const setupScreenElement = document.getElementById("setupScreen");
 const gameScreenElement = document.getElementById("gameScreen");
 const setupFormElement = document.getElementById("setupForm");
 const wordsInputElement = document.getElementById("wordsInput");
+const wordListSelectElement = document.getElementById("wordListSelect");
 const wordCountSelectElement = document.getElementById("wordCountSelect");
 const boardSizeSelectElement = document.getElementById("boardSizeSelect");
 const minimumSizeTextElement = document.getElementById("minimumSizeText");
@@ -277,7 +348,23 @@ function shuffle(items) {
 
 function getStarterWords() {
   const requestedCount = Number(wordCountSelectElement?.value || STARTER_WORD_COUNT);
-  return shuffle([...DEFAULT_WORDS]).slice(0, requestedCount);
+  const selectedListName = wordListSelectElement?.value || "Random";
+  const sourceWords = WORD_POOLS[selectedListName] || DEFAULT_WORDS;
+  return shuffle([...sourceWords]).slice(0, requestedCount);
+}
+
+function populateWordListOptions() {
+  wordListSelectElement.innerHTML = "";
+
+  Object.keys(WORD_POOLS).forEach((listName) => {
+    const option = document.createElement("option");
+    option.value = listName;
+    option.textContent = listName;
+    if (listName === "Random") {
+      option.selected = true;
+    }
+    wordListSelectElement.appendChild(option);
+  });
 }
 
 function populateWordCountOptions() {
@@ -714,7 +801,12 @@ wordCountSelectElement.addEventListener("change", () => {
   applyStarterWords();
 });
 
+wordListSelectElement.addEventListener("change", () => {
+  applyStarterWords();
+});
+
 function initializeApp() {
+  populateWordListOptions();
   populateWordCountOptions();
   applyStarterWords();
   renderScreen("setup");
