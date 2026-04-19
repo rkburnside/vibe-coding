@@ -1,0 +1,14 @@
+[Unit]
+Description=Wake-on-LAN Button Service
+After=network.target
+
+[Service]
+User=rich
+WorkingDirectory=/home/rich
+ExecStart=/usr/bin/python3 /home/rich/wol_button.py
+Restart=always
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

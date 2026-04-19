@@ -1,0 +1,12 @@
+[Unit]
+Description=WOL Server
+After=network.target
+
+[Service]
+User=rich
+WorkingDirectory=/home/rich
+ExecStart=/usr/bin/python3 /home/rich/wol_server.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
