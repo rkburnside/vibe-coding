@@ -190,6 +190,7 @@ const FOUND_WORD_COLORS = [
   "#4361ee",
   "#7cb518"
 ];
+const THEME_STORAGE_KEY = "wordsearch-theme";
 const boardElement = document.getElementById("board");
 const boardOverlayElement = document.getElementById("boardOverlay");
 const wordListElement = document.getElementById("wordList");
@@ -197,6 +198,7 @@ const statusTextElement = document.getElementById("statusText");
 const celebrationCardElement = document.getElementById("celebrationCard");
 const restartButton = document.getElementById("restartButton");
 const editSetupButton = document.getElementById("editSetupButton");
+const themeToggleButton = document.getElementById("themeToggleButton");
 const timerTextElement = document.getElementById("timerText");
 const setupScreenElement = document.getElementById("setupScreen");
 const gameScreenElement = document.getElementById("gameScreen");
@@ -214,6 +216,56 @@ let gameState = null;
 let timerIntervalId = null;
 let currentConfig = null;
 let isApplyingStarterWords = false;
+let currentTheme = "light";
+
+function getStoredTheme() {
+  try {
+    return window.localStorage.getItem(THEME_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function saveTheme(theme) {
+  try {
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch {
+    // Ignore storage failures and keep the current in-memory theme.
+  }
+}
+
+function getPreferredTheme() {
+  const storedTheme = getStoredTheme();
+
+  if (storedTheme === "light" || storedTheme === "dark") {
+    return storedTheme;
+  }
+
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function updateThemeButton() {
+  const nextThemeLabel = currentTheme === "dark" ? "Light mode" : "Dark mode";
+  themeToggleButton.textContent = nextThemeLabel;
+  themeToggleButton.setAttribute("aria-pressed", String(currentTheme === "dark"));
+  themeToggleButton.setAttribute("aria-label", `Switch to ${nextThemeLabel.toLowerCase()}`);
+}
+
+function applyTheme(theme) {
+  currentTheme = theme === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = currentTheme;
+  updateThemeButton();
+
+  if (gameState) {
+    renderFoundWordOverlay();
+  }
+}
+
+function toggleTheme() {
+  const nextTheme = currentTheme === "dark" ? "light" : "dark";
+  applyTheme(nextTheme);
+  saveTheme(nextTheme);
+}
 
 function buildPuzzleState(config) {
   const words = config.words.map((word) => word.toUpperCase());
@@ -466,7 +518,10 @@ function renderFoundWordOverlay() {
     halo.setAttribute("rx", String(radius));
     halo.setAttribute("ry", String(radius));
     halo.setAttribute("fill", "none");
-    halo.setAttribute("stroke", "rgba(255, 255, 255, 0.9)");
+    halo.setAttribute(
+      "stroke",
+      window.getComputedStyle(document.documentElement).getPropertyValue("--overlay-halo").trim()
+    );
     halo.setAttribute("stroke-width", String(outlineWidth + 2));
     halo.setAttribute("transform", `rotate(${angle} ${midpointX} ${midpointY})`);
 
@@ -787,6 +842,7 @@ function restartCurrentGame() {
 
 restartButton.addEventListener("click", restartCurrentGame);
 editSetupButton.addEventListener("click", returnToSetup);
+themeToggleButton.addEventListener("click", toggleTheme);
 setupFormElement.addEventListener("submit", handleSetupSubmit);
 wordsInputElement.addEventListener("input", () => {
   if (isApplyingStarterWords) {
@@ -806,6 +862,7 @@ wordListSelectElement.addEventListener("change", () => {
 });
 
 function initializeApp() {
+  applyTheme(getPreferredTheme());
   populateWordListOptions();
   populateWordCountOptions();
   applyStarterWords();
