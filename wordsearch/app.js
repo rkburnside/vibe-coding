@@ -245,10 +245,10 @@ function getPreferredTheme() {
 }
 
 function updateThemeButton() {
-  const nextThemeLabel = currentTheme === "dark" ? "Light mode" : "Dark mode";
+  const nextThemeLabel = currentTheme === "dark" ? "Light" : "Dark";
   themeToggleButton.textContent = nextThemeLabel;
   themeToggleButton.setAttribute("aria-pressed", String(currentTheme === "dark"));
-  themeToggleButton.setAttribute("aria-label", `Switch to ${nextThemeLabel.toLowerCase()}`);
+  themeToggleButton.setAttribute("aria-label", `Switch to ${nextThemeLabel.toLowerCase()} theme`);
 }
 
 function applyTheme(theme) {
