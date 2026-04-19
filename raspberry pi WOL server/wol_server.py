@@ -22,29 +22,80 @@ def send_magic_packet(mac_address):
 def home():
     return '''
     <html>
+    <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 20px 16px 32px;
+            background: #f6f7fb;
+            color: #172033;
+        }
+
+        h2, h3 {
+            margin-bottom: 12px;
+        }
+
+        form {
+            margin-bottom: 14px;
+        }
+
+        button {
+            width: 100%;
+            min-height: 64px;
+            padding: 16px 18px;
+            border: 0;
+            border-radius: 16px;
+            background: #1f6feb;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            min-height: 56px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border: 1px solid #c7d2e3;
+            border-radius: 14px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 18px;
+            box-shadow: 0 10px 30px rgba(23, 32, 51, 0.08);
+            margin-bottom: 18px;
+        }
+    </style>
+    </head>
     <body>
     <h2>Wake-on-LAN Server</h2>
-    
-    <!-- Buttons for predefined devices -->
-    <form action="/wake" method="post">
-        <input type="hidden" name="mac" value="241c0408b847">
-        <button type="submit">OMV6 192.168.68.250</button>
-    </form>
-    <form action="/wake" method="post">
-        <input type="hidden" name="mac" value="dc4a3e7335c2">
-        <button type="submit">OMV7 192.168.68.251</button>
-    </form>
-    <form action="/wake" method="post">
-        <input type="hidden" name="mac" value="a85e45d02ee3">
-        <button type="submit">Rico's Desktop 192.168.68.252</button>
-    </form>
-    
-    <!-- Manual input form -->
-    <h3>Manual Wake</h3>
-    <form action="/wake" method="post">
-        MAC Address: <input type="text" name="mac" placeholder="e.g., AA:BB:CC:DD:EE:FF">
-        <button type="submit">Wake Device</button>
-    </form>
+
+    <div class="card">
+        <form action="/wake" method="post">
+            <input type="hidden" name="mac" value="dc4a3e7335c2">
+            <button type="submit">Wake OMV7 192.168.68.251</button>
+        </form>
+        <form action="/wake" method="post">
+            <input type="hidden" name="mac" value="a85e45d02ee3">
+            <button type="submit">Wake Rico's Desktop 192.168.68.252</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Manual Wake</h3>
+        <form action="/wake" method="post">
+            <input type="text" name="mac" placeholder="e.g., AA:BB:CC:DD:EE:FF">
+            <button type="submit">Wake Device</button>
+        </form>
+    </div>
     </body>
     </html>
     '''
