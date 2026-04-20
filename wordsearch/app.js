@@ -105,9 +105,39 @@ const DEFAULT_WORDS = [
   "ZEPPELIN"
 ];
 const MAX_WORDS = 30;
+const MAX_BOARD_SIZE = 13;
 const STARTER_WORD_COUNT = 10;
+const MAX_WORD_COUNT_OPTION = 18;
+const HARRY_POTTER_WORDS = [
+  "HOGWARTS", "DUMBLEDORE", "VOLDEMORT", "HARRY", "POTTER", "HERMIONE", "RONWEASLEY", "GINNY",
+  "SNAPE", "HAGRID", "DRACOMALFOY", "LUNALOVEGOOD", "NEVILLE", "LONGBOTTOM", "SIRIUS", "BLACK",
+  "REMUS", "LUPIN", "TONKS", "CEDRIC", "DIGGORY", "CHOCHANG", "FLEUR", "DELACOUR", "KRUM", "DOBBY",
+  "KREACHER", "HEDWIG", "FANG", "BUCKBEAK", "NORBERT", "ARAGOG", "MYRTLE", "FILCH", "MCGONAGALL",
+  "FLITWICK", "SPROUT", "QUIRRELL", "LOCKHART", "UMBRIDGE", "SLUGHORN", "TRELAWNEY", "MADAMEHOOCH",
+  "MADAMEMAXIME", "KARKAROFF", "OLLIVANDER", "XENOPHILIUS", "PETUNIA", "VERNON", "DUDLEY", "WORMTAIL",
+  "BELLATRIX", "LUCIUS", "NARCISSA", "MALFOY", "FRED", "GEORGE", "PERCY", "BILLWEASLEY", "CHARLIE",
+  "MOLLY", "ARTHUR", "KINGSLEY", "SHACKLEBOLT", "MOODY", "POMFREY", "PADFOOT", "PRONGS", "MOONY",
+  "CROOKSHANKS", "SCABBERS", "NAGINI", "FAWKES", "PIXIES", "THRESTRAL", "HIPPOGRIFF", "BASILISK",
+  "DEMENTOR", "BOGGART", "SKREWT", "ACROMANTULA", "GRINDYLOW", "MERPEOPLE", "CENTAUR", "PHOENIX",
+  "DRAGON", "OWLPOST", "HOWLER", "PORTKEY", "HORCRUX", "PENSIEVE", "TIMETURNER", "REMEMBRALL",
+  "DELUMINATOR", "SNEAKOSCOPE", "OMNIOCULARS", "QUIDDITCH", "BLUDGER", "QUAFFLE", "SNITCH", "BEATER",
+  "SEEKER", "KEEPER", "CHASER", "FIREBOLT", "NIMBUS", "BROOMSTICK", "BUTTERBEER", "PUMPKINJUICE",
+  "POLYJUICE", "VERITASERUM", "FELIXFELICIS", "AMORTENTIA", "WOLFSBANE", "GILLYWEED", "MANDRAKE",
+  "FLOONETWORK", "APPARITION", "DISAPPARATE", "LEGILIMENS", "OCCLUMENCY", "PATRONUS", "EXPELLIARMUS",
+  "STUPEFY", "PETRIFICUS", "OBLIVIATE", "RIDDIKULUS", "LUMOS", "NOX", "ACCIO", "ALOHOMORA",
+  "WINGARDIUM", "LEVIOSA", "CRUCIATUS", "IMPERIO", "AVADAKEDAVRA", "SECTUMSEMPRA", "MUFFLIATO",
+  "CONFUNDO", "REPARO", "PROTEGO", "IMPEDIMENTA", "REDUCTO", "INCENDIO", "AGUAMENTI", "LEVICORPUS",
+  "DIFFINDO", "GEMINIO", "TARANTALLEGRA", "HOGSMEADE", "DIAGONALLEY", "KNOCKTURN", "GRINGOTTS",
+  "AZKABAN", "MINISTRY", "ATRIUM", "PRIVETDRIVE", "GODRICSHOLLOW", "LITTLEWHING", "BURROW",
+  "SHELLCOTTAGE", "MALFOYMANOR", "SPINNERSEND", "HONEYDUKES", "ZONKOS", "BORGINBURKES", "OLLIVANDERS",
+  "LEAKYCAULDRON", "SHRIEKING", "WILLOW", "FORBIDDEN", "GREATHALL", "COMMONROOM", "HEADMASTER",
+  "PREFECT", "AUROR", "DEATHEATER", "ORDERPHOENIX", "PHILOSOPHER", "SORCERER", "HALFBLOOD", "HALLOWS",
+  "ELDERWAND", "CLOAK", "STONE", "BEZOAR", "BOGROD", "GRIPHOOK", "PEEVES", "ERROL", "HERMES", "HOOCH",
+  "RITA", "SKEETER", "BAGMAN", "YAXLEY", "KARKUS", "STANSHUNPIKE", "RUNCORN", "CROUCH"
+];
 const WORD_POOLS = {
   Random: DEFAULT_WORDS,
+  "Harry Potter": HARRY_POTTER_WORDS,
   Aviation: [
     "AILERON", "AIRSPEED", "AIRWAY", "ALTIMETER", "APPROACH", "APRON", "ATTITUDE", "AVGAS", "AVIATOR",
     "BALLOON", "BANKING", "BEACON", "BLACKBOX", "BRIEFING", "CABINS", "CARGO", "CHECKLIST", "CLIMB",
@@ -151,16 +181,16 @@ const WORD_POOLS = {
   "Mormon Words": [
     "AARONIC", "AGENCY", "ALTAR", "ATONEMENT", "BAPTISM", "BEEHIVE", "BISHOP", "BLESSINGS", "BOOKOFMORMON",
     "CALLING", "CELESTIAL", "CHARITY", "CONVERT", "COVENANT", "DEACON", "DESERET", "ENDOWMENT", "ENDURE",
-    "ETERNAL", "EXALTATION", "FAITH", "FASTING", "FELLOWSHIP", "FOREORDINATION", "GENEALOGY", "GENTILES",
+    "ETERNAL", "EXALTATION", "FAITH", "FASTING", "FELLOWSHIP", "PREMORTALITY", "GENEALOGY", "GENTILES",
     "GOSPEL", "GRACE", "HEAVENLY", "HIGHPRIEST", "HOMEEVENING", "HOSANNA", "INSTITUTE", "IRONROD", "JEREDITES",
     "JOSEPHSMITH", "KINGBENJAMIN", "LAMANITES", "LEHI", "LIBERTYJAIL", "MAELCHIZEDEK", "MISSIONARY", "MODESTY",
     "MORONI", "NEPHI", "ORDINANCE", "PATRIARCH", "PIONEER", "PLANOFSALV", "PRAYER", "PRIESTHOOD", "PRIMARY",
     "PROPHET", "REDEEMER", "RELIEFSOC", "REPENTANCE", "RESTORATION", "RESURRECTION", "SABBATH", "SACRAMENT",
     "SALVATION", "SANCTIFY", "SEMINARY", "SERVICE", "SEVENTY", "STAKE", "STEWARDSHIP", "STRIPLING", "TABERNACLE",
     "TEMPLE", "TENDERMERCIES", "TESTIMONY", "TITHING", "WARD", "ZION", "YOUNGWOMEN", "YOUNGMEN",
-    "BEOFGOODCHEER", "CHOOSETHERIGHT", "COMEFOLLOWME", "ENDURETOEND", "FAMILIESFOREVER", "FAITHINCHRIST",
+    "BEOFGOODCHEER", "CTR", "COMEFOLLOWME", "ENDURETOEND", "FOREVERFAMILY", "FAITHINCHRIST",
     "FOLLOWPROPHET", "GATHERISRAEL", "HOLYGHOST", "HOLDTOROD", "HOUSEOFLORD", "IAMACHILD", "INTHEWORLD",
-    "JOYINCHRIST", "KEEPCOMMANDMENTS", "MINISTERONE", "STILLSMALLVOICE", "TENDERMERCIES", "THINKCELESTIAL",
+    "JOYINCHRIST", "COMMANDMENTS", "MINISTERONE", "SMALLVOICE", "TENDERMERCIES", "CELESTIAL",
     "TRUSTINGOD", "WALKINLIGHT"
   ],
   "Mormon and Bible Books": [
@@ -170,9 +200,9 @@ const WORD_POOLS = {
     "JOB", "PSALMS", "PROVERBS", "ECCLESIASTES", "SONGOFSONGS", "ISAIAH", "JEREMIAH", "LAMENTATIONS", "EZEKIEL",
     "DANIEL", "HOSEA", "JOEL", "AMOS", "OBADIAH", "JONAH", "MICAH", "NAHUM", "HABAKKUK", "ZEPHANIAH", "HAGGAI",
     "ZECHARIAH", "MALACHI", "MATTHEW", "MARK", "LUKE", "JOHN", "ACTS", "ROMANS", "1CORINTHIANS", "2CORINTHIANS",
-    "GALATIANS", "EPHESIANS", "PHILIPPIANS", "COLOSSIANS", "1THESSALONIANS", "2THESSALONIANS", "1TIMOTHY",
+    "GALATIANS", "EPHESIANS", "PHILIPPIANS", "COLOSSIANS", "1THESS", "2THESS", "1TIMOTHY",
     "2TIMOTHY", "TITUS", "PHILEMON", "HEBREWS", "JAMES", "1PETER", "2PETER", "1JOHN", "2JOHN", "3JOHN", "JUDE",
-    "REVELATION", "MOSES", "ABRAHAM", "FACSIMILES", "JSTMATTHEW", "JSTGENESIS", "ARTICLESOFFAITH", "DC1", "DC2",
+    "REVELATION", "MOSES", "ABRAHAM", "FACSIMILES", "JSTMATTHEW", "JSTGENESIS", "FAITHARTICLES", "DC1", "DC2",
     "DC3", "DC4", "DC5", "DC6", "DC7", "DC8", "DC9", "DC10", "DC20", "DC76", "DC89", "DC121", "DC122", "DC123"
   ]
 };
@@ -401,8 +431,23 @@ function shuffle(items) {
 function getStarterWords() {
   const requestedCount = Number(wordCountSelectElement?.value || STARTER_WORD_COUNT);
   const selectedListName = wordListSelectElement?.value || "Random";
-  const sourceWords = WORD_POOLS[selectedListName] || DEFAULT_WORDS;
-  return shuffle([...sourceWords]).slice(0, requestedCount);
+  const sourceWords = (WORD_POOLS[selectedListName] || DEFAULT_WORDS).filter((word) => word.length <= MAX_BOARD_SIZE);
+
+  for (let count = Math.min(requestedCount, sourceWords.length); count >= 2; count -= 1) {
+    for (let attempt = 0; attempt < 300; attempt += 1) {
+      const candidate = shuffle([...sourceWords]).slice(0, count);
+      if (calculateMinimumBoardSize(candidate) <= MAX_BOARD_SIZE) {
+        return candidate;
+      }
+    }
+
+    const shortestFirst = shuffle([...sourceWords]).sort((left, right) => left.length - right.length).slice(0, count);
+    if (calculateMinimumBoardSize(shortestFirst) <= MAX_BOARD_SIZE) {
+      return shortestFirst;
+    }
+  }
+
+  return shuffle([...sourceWords]).slice(0, Math.min(2, sourceWords.length));
 }
 
 function populateWordListOptions() {
@@ -422,7 +467,7 @@ function populateWordListOptions() {
 function populateWordCountOptions() {
   wordCountSelectElement.innerHTML = "";
 
-  for (let count = 10; count <= 30; count += 1) {
+  for (let count = 10; count <= MAX_WORD_COUNT_OPTION; count += 1) {
     const option = document.createElement("option");
     option.value = String(count);
     option.textContent = String(count);
@@ -434,8 +479,10 @@ function populateWordCountOptions() {
 }
 
 function applyStarterWords() {
+  const starterWords = getStarterWords();
   isApplyingStarterWords = true;
-  wordsInputElement.value = getStarterWords().join("\n");
+  wordsInputElement.value = starterWords.join("\n");
+  wordCountSelectElement.value = String(starterWords.length);
   isApplyingStarterWords = false;
   clearSetupError();
   updateSetupPreview();
@@ -732,7 +779,7 @@ function buildSizeOptions(minimumSize) {
     return [];
   }
 
-  const maxSize = minimumSize + 8;
+  const maxSize = Math.min(MAX_BOARD_SIZE, minimumSize + 8);
   const options = [];
 
   for (let size = minimumSize; size <= maxSize; size += 1) {
@@ -748,6 +795,7 @@ function updateSetupPreview() {
   const ignoredWordCount = Math.max(0, words.length - MAX_WORDS);
   const minimumSize = calculateMinimumBoardSize(limitedWords);
   const sizeOptions = buildSizeOptions(minimumSize);
+  const previousSelection = Number(boardSizeSelectElement.value);
 
   minimumSizeTextElement.textContent = `Minimum size: ${minimumSize} x ${minimumSize}`;
   wordCountTextElement.textContent =
@@ -778,6 +826,9 @@ function updateSetupPreview() {
     option.textContent = `${size} x ${size}`;
     boardSizeSelectElement.appendChild(option);
   });
+
+  const nextSelection = sizeOptions.includes(previousSelection) ? previousSelection : sizeOptions[0];
+  boardSizeSelectElement.value = String(nextSelection);
 }
 
 function showSetupError(message) {
